@@ -1,0 +1,172 @@
+{% csrf_token %}
+<div class="custom_form change_client_form">
+
+<div class="result-list">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Редактировать клиента</h1>
+            <button class="form_close_btn form_change_users_close_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label">Код клиента</label>
+                <input name="client_code_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Код клиента">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">ФИО</label>
+                <input name="full_name_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="ФИО">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Наименование компании</label>
+                <input name="company_name_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Наименование компании">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Должность</label>
+                <input name="job_title_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Должность">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Ответственный руководитель</label>
+                <select name="employee_change" class="form_select_input margin_right_20" required>
+                    {% for employee in employees %}
+                        <option value="{{employee.id}}">{{employee.name}} {{employee.surname}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Телефон</label>
+                <input name="phone_change" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" max="99999999999"  type="number" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="89008007060">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Telegram ID</label>
+                <input name="tg_id_change" type="text" onkeyup="this.value = this.value.replace(/@/g,'');" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="@client">
+            </div>
+            <button class="my_button save_change_form">
+                Сохранить
+            </button>
+            <button class="table-button delete_change_form">
+                Удалить
+            </button>
+        </div>
+    </div>
+</div>
+
+<script defer>
+    let client_code_change = document.getElementsByName("client_code_change")[0]
+    let full_name_change = document.getElementsByName("full_name_change")[0]
+    let company_name_change = document.getElementsByName("company_name_change")[0]
+    let job_title_change = document.getElementsByName("job_title_change")[0]
+    let employee_change = document.getElementsByName("employee_change")[0]
+    let phone_change = document.getElementsByName("phone_change")[0]
+    let tg_id_change = document.getElementsByName("tg_id_change")[0]
+
+    let change_client_form = document.querySelector('.change_client_form')
+    let client_list_row = document.querySelectorAll(".client_list_row")
+
+    let overlay = document.querySelector('.overlay')
+    let form_change_users_close_btn = document.querySelector('.form_change_users_close_btn')
+
+    form_change_users_close_btn.addEventListener("click", ev => {
+        change_client_form.classList.toggle("form_active")
+        overlay.classList.toggle("overlay_active")
+    })
+
+    for (let i = 0; i < client_list_row.length; i++) {
+        client_list_row[i].addEventListener("click", evt => {
+            change_client_form.classList.toggle("form_active")
+            change_client_form.id = client_list_row[i].id
+
+            overlay.classList.toggle("overlay_active")
+            let client_id = parseInt(client_list_row[i].id)
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: "{% url 'get_one_client' %}" + `?pk=${client_id}`,
+                processData: false,
+                success: function (response) {
+                    client_code_change.value = response['client_code']
+                    full_name_change.value = response['full_name']
+                    company_name_change.value = response['company_name']
+                    employee_change.value = response['employee']
+                    job_title_change.value = response['job_title']
+                    phone_change.value = response['phone']
+                    tg_id_change.value = response['tg_id']
+                },
+                error: function (response) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+        })
+    }
+
+
+let save_change_form = document.querySelector(".save_change_form")
+    save_change_form.addEventListener('click', evt => {
+        let client_id = parseInt(change_client_form.id)
+        let data = {
+            "pk": client_id,
+            "client_code": client_code_change.value,
+            "name": full_name_change.value,
+            "company_name": company_name_change.value,
+            "employee": employee_change.value,
+            "job_title": job_title_change.value,
+            "phone": phone_change.value,
+            "tg_id": tg_id_change.value,
+            "csrfmiddlewaretoken": '{{ csrf_token }}'
+        }
+        $.ajax({
+            url: "{% url 'update_client_view' %}",
+            method: 'post',
+            dataType: 'html',
+            data: data,
+            success: function(data){
+                location.reload()
+            },
+            error: function (data) {
+                alert("Ошибка!")
+                location.reload()
+            }
+        });
+    })
+
+
+    delete_change_form = document.querySelector(".delete_change_form")
+    delete_change_form.addEventListener('click', evt => {
+            let client_id = parseInt(change_client_form.id)
+            let my_data = {
+                "client_id": client_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            }
+
+            $.ajax({
+                url: "{% url 'delete_client_btn' %}",
+                method: 'post',
+                dataType: 'html',
+                data: my_data,
+                success: function (data) {
+                    location.reload()
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                }
+            });
+
+    })
+
+
+
+</script>

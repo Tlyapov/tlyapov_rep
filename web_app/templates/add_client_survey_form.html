@@ -1,0 +1,98 @@
+{% csrf_token %}
+<div class="custom_form add_client_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Добавить клиента</h1>
+            <button class="form_close_btn form_client_close_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="result-list">
+            <div class="result-list-table-content ">
+                        {% for client in clients %}
+                            <div class="row align-items_center client_list_row message_row" id="{{client.id}}">
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        <input type="checkbox" class="client_checkbox" name="{{client.id}}">
+                                    </div>
+                                </div>
+                                <div class="col result-list-sort-container">
+                                    <div class="result-list-text" style="font-size:18px; margin-bottom:10px">
+                                        {{ client.name }} {{client.company_name}} {{client.phone}}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+            </div>
+            <button class="my_button add_client_to_survey" style="margin-top:20px">
+                Добавить
+            </button>
+        </div>
+    </div>
+</div>
+<script defer>
+    document.addEventListener("DOMContentLoaded", e => {
+        let add_client_survey_form = document.querySelectorAll(".add_client_survey_form")
+        let form = document.querySelector('.add_client_form')
+        let form2 = document.querySelector('.start_survey_form')
+        let overlay = document.querySelector('.overlay')
+        let form_client_close_btn = document.querySelector('.form_client_close_btn')
+        let add_client_to_survey = document.querySelector(".add_client_to_survey")
+
+        async function elementUpdate(selector) {
+          try {
+            var html = await (await fetch(location.href)).text();
+            var newdoc = new DOMParser().parseFromString(html, 'text/html');
+            document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+            console.log('Элемент '+selector+' был успешно обновлен');
+            return true;
+          } catch(err) {
+            console.log('При обновлении элемента '+selector+' произошла ошибка:');
+            console.dir(err);
+            return false;
+          }
+        }
+
+        add_client_to_survey.addEventListener('click', evt => {
+        if (confirm("Вы уверены?")) {
+            let checkboxes = document.querySelectorAll(".client_checkbox")
+            let clients_list = []
+            for(let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    clients_list.push(parseInt(checkboxes[i].name))
+                }
+            }
+            let my_data = {
+                "clients": clients_list.toString(),
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            }
+            elementUpdate('div#test');
+            elementUpdate('div#clients_update');
+            $.ajax({
+                url: "{% url 'add_clients_to_survey' %}",
+                method: 'post',
+                dataType: 'html',
+                data: my_data,
+                success: function (data) {
+                    form.classList.toggle("form_active")
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                }
+            });
+            }
+        })
+        for (let i = 0; i < add_client_survey_form.length; i++){
+            add_client_survey_form[i].addEventListener("click", ev => {
+                form.classList.toggle("form_active")
+            })
+        }
+        form_client_close_btn.addEventListener("click", ev => {
+            form.classList.toggle("form_active")
+        })
+    })
+</script>

@@ -1,0 +1,414 @@
+{% load static %}
+
+ <div class="container" id="get_one_employee">
+
+<div class="change_employee_form">
+    <div class="admin-content">
+                <div class="container">
+                    <div class="row fix_row">
+
+                        <div class="admin-content-left">
+                            <div class="input_container" style="position: relative">
+                                <div>
+                                    <div class="flex-wrapper">
+                                        <a href="{% url 'employees' 1 %}" style="margin-bottom: -1px; padding-bottom: 12px; text-decoration: none; margin-right: 30px; color: #000; font-size: 12px; font-style: normal; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5;">< Вернуться назад</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-content-right">
+                            <div class="input_container">
+                                {% if user.is_superuser or user.role == 'admin' %}
+                                <button class="col table-button delete_change_form" >
+                                        Удалить
+                                </button>
+                                {%endif%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+<div class="statistic-cards">
+                <div class="row">
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img person_bg">
+                            </div>
+                            <div class="card_text">
+                                Кол-во клиентов
+                            </div>
+                            <div class="card_value">
+                                {{employee_clients_count}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img headset">
+                            </div>
+                            <div class="card_text">
+                                Кол-во обратной связи
+                            </div>
+                            <div class="card_value">
+                                {{ fb_by_employee }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img star">
+                            </div>
+                            <div class="card_text">
+                                Средняя оценка
+                            </div>
+                            <div class="card_value">
+                                {{ average_rating_by_empl }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+<div style="background:#DEDEDE; padding:20px; margin:0px 0px 30px">
+         <div class="row">
+        <div class="col input_container-horizontal">
+            <h4 class="result-list-heading" style="font-size: 20px">Информация</h4>
+        </div>
+    </div>
+
+        <div class="result-list-table">
+            <div class="result-list-table">
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="col result-list-text">
+                        <label class="input_label">Имя</label>
+                        <input name="name_change" type="text" class="form_text_input form_text_input_one_student"
+                               placeholder="Имя">
+                    </div>
+                    <div class="col result-list-text">
+                        <label class="input_label">Фамилия</label>
+                        <input name="surname_change" type="text" class="form_text_input form_text_input_one_student"
+                                   placeholder="Фамилия">
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="col result-list-text">
+                        <label class="input_label">Telegram ID</label>
+                        <input name="tg_id_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                               placeholder="@client">
+                    </div>
+                    <div class="col result-list-text">
+                        <label class="input_label">Телефон</label>
+                        <input name="phone_change" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" max="99999999999"  type="number" class="form_text_input form_text_input_one_student margin_right_20"
+                               placeholder="89008007060">
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="col result-list-text">
+                        <label class="input_label">Должность</label>
+                        <input name="empl_job_title_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                               placeholder="Должность">
+                    </div>
+                    <div class="col result-list-text">
+                        <label class="input_label">Роль</label>
+                        <select name="employee_role_change" class="form_select_input margin_right_20" required>
+                            <option value="employee">Сотрудник</option>
+                            <option value="user">Пользователь</option>
+                            <option value="admin">Админ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="col result-list-text">
+                        <label class="input_label">Логин</label>
+                        <input name="login_change" type="text" class="form_text_input form_text_input_one_student"
+                               placeholder="Наименование компании">
+                    </div>
+                    <div class="col result-list-text">
+                        <label class="input_label">Пароль</label>
+                        <input name="password_change" type="password" class="form_text_input form_text_input_one_student"
+                               placeholder="Пароль">
+                    </div>
+                </div>
+                <button class="my_button save_change_form">
+                Сохранить
+            </button>
+            </div>
+        </div>
+</div>
+
+
+    <div class="result-list">
+                <div class="result-list-header">
+                    <div class="row fix_row">
+                        <div class="admin-content-left">
+                            <div class="input_container-horizontal">
+                                <h4 class="result-list-heading" style="font-size: 20px">История</h4>
+                            </div>
+                        </div>
+
+                        <div class="admin-content-right">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-list-table ">
+                    <div class="result-list-table-header">
+                        <div class="row">
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    ФИО
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Статус
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Компания
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Код клиента
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Должность
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Телефон
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Последняя оценка
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Дата
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Кол-во обратной связи
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-list-table-content ">
+                    {% for client, rating, rating_date, task_count in clients_employee %}
+                        <div class="row align-items_center result-list-row message_row" id="{{client.id}}">
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ client.name }}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if client.chat_id %}
+                                            Активен
+                                    {% else %}
+                                            Неактивен
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ client.company_name }}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ client.client_code }}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ client.job_title }}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ client.phone }}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if rating == '🟢 Все нравится!' %}
+                                    🟢
+                                    {% elif rating == '🟡 Есть вопросы.' %}
+                                    🟡
+                                    {% elif rating == '🔴 Очень плохо (' %}
+                                    🔴
+                                    {% else %}
+                                    {{rating}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ rating_date }}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ task_count }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+ </div>
+
+
+
+<script defer>
+    document.getElementById('get_one_employee').hidden = true
+    document.getElementById('all_employees').hidden = false
+
+    let name_change = document.getElementsByName("name_change")[0]
+    let surname_change = document.getElementsByName("surname_change")[0]
+    let login_change = document.getElementsByName("login_change")[0]
+    let password_change = document.getElementsByName("password_change")[0]
+    let tg_id_change = document.getElementsByName("tg_id_change")[0]
+    let phone_change = document.getElementsByName("phone_change")[0]
+    let employee_role_change = document.getElementsByName("employee_role_change")[0]
+    let empl_job_title_change = document.getElementsByName("empl_job_title_change")[0]
+
+
+    let change_employee_form = document.querySelector('.change_employee_form')
+    let employee_list_row = document.querySelectorAll(".result-list-row")
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    if (window.location.href.split("?").length > 1){
+        if(getUrlVars()["employee"]) {
+            document.getElementById('get_one_employee').hidden = false
+            document.getElementById('all_employees').hidden = true
+            let employee_id = getUrlVars()["employee"]
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: "{% url 'get_one_employee' %}" + `?pk=${employee_id}`,
+                processData: false,
+                success: function (response) {
+                    name_change.value = response['name']
+                    surname_change.value = response['surname']
+                    login_change.value = response['login']
+                    password_change.value = response['password']
+                    tg_id_change.value = response['tg_id']
+                    phone_change.value = response['phone']
+                    employee_role_change.value = response['role']
+                    empl_job_title_change.value = response['job_title']
+                },
+                error: function (response) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+            }
+    }
+
+
+
+    for (let i = 0; i < employee_list_row.length; i++) {
+        employee_list_row[i].addEventListener("click", evt => {
+            document.getElementById('get_one_employee').hidden = false
+            document.getElementById('all_employees').hidden = true
+            change_employee_form.id = employee_list_row[i].id
+
+            let employee_id = parseInt(employee_list_row[i].id)
+
+
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            filter_str += ("&employee=" + change_employee_form.id.toString())
+            window.location.href = current_location += filter_str
+        })
+    }
+
+
+
+    let save_change_form = document.querySelector(".save_change_form")
+    save_change_form.addEventListener('click', evt => {
+        let employee_id =  getUrlVars()["employee"]
+        let data = {
+            "pk": employee_id,
+            "name": name_change.value,
+            "surname": surname_change.value,
+            "login": login_change.value,
+            "password": password_change.value,
+            "confirm_password": password_change.value,
+            "tg_id": tg_id_change.value,
+            "phone": phone_change.value,
+            "role": employee_role_change.value,
+            "job_title": empl_job_title_change.value,
+            "csrfmiddlewaretoken": '{{ csrf_token }}'
+        }
+        $.ajax({
+            url: "{% url 'update_employee_view' %}",
+            method: 'post',
+            dataType: 'html',
+            data: data,
+            success: function(data){
+                location.reload()
+            },
+            error: function (data) {
+                alert("Ошибка!")
+                location.reload()
+            }
+        });
+    })
+
+
+    delete_change_form = document.querySelector(".delete_change_form")
+    delete_change_form.addEventListener('click', evt => {
+            let employee_id = getUrlVars()["employee"]
+            let my_data = {
+                "employee_id": employee_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            }
+
+            $.ajax({
+                url: "{% url 'delete_employee_btn' %}",
+                method: 'post',
+                dataType: 'html',
+                data: my_data,
+                success: function (data) {
+                    let current_location = window.location.href.split("?")[0]
+                    window.location.href = current_location
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                }
+            });
+
+
+    })
+</script>

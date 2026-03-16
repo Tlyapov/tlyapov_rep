@@ -1,0 +1,190 @@
+{% csrf_token %}
+<div class="custom_form change_task_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Редактировать задачу</h1>
+            <button class="form_close_btn form_change_task_close_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label">Тип задачи</label>
+                <select name="feedback_type_change" class="form_select_input margin_right_20" required>
+                    <option value="review">Отзыв</option>
+                    <option value="review_by_employee">Отзыв о сотруднике</option>
+                    <option value="offer">Предложение</option>
+                    <option value="light">Светофор</option>
+                    <option value="light_by_employee">Светофор по сотруднику</option>
+                </select>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Клиент</label>
+                <select name="client_change" class="form_select_input margin_right_20" required>
+                    {% for client in clients %}
+                        <option value="{{client.id}}">{{client.name}} {{client.company_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Дата постановки</label>
+                <input name="start_date_change" type="date" class="form_text_input form_text_input_one_student"
+                       placeholder="">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Дата окончания</label>
+                <input name="period_len_by_days_change" type="date" class="form_text_input form_text_input_one_student"
+                       placeholder="">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Статус выполнения</label>
+                <select name="progress_status_change" class="form_select_input margin_right_20" required>
+                    <option value="not_taken">Не взят в работу</option>
+                    <option value="in_progress">В работе</option>
+                    <option value="done">Выполнено</option>
+                </select>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Исполнитель</label>
+                <select name="employee_change" class="form_select_input margin_right_20" required>
+                        <option value="all"></option>
+                    {% for employee in employees %}
+                        <option value="{{employee.id}}">{{employee.name}} {{employee.surname}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Комментарий к работе</label>
+                <input name="answer_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="Комментарий к задаче">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Отчёт по задаче</label>
+                <input name="report_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="Ваш отчёт">
+            </div>
+            </div>
+            <button class="my_button save_change_form">
+                Сохранить
+            </button>
+            {% if user.is_superuser or user.role == 'admin' %}
+            <button class="table-button delete_change_form">
+                Удалить
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script defer>
+    let feedback_type_change = document.getElementsByName("feedback_type_change")[0]
+    let client_change = document.getElementsByName("client_change")[0]
+    let data_time_change = document.getElementsByName("start_date_change")[0]
+    let employee_change = document.getElementsByName("employee_change")[0]
+    let answer_change = document.getElementsByName("answer_change")[0]
+    let report_change = document.getElementsByName("report_change")[0]
+    let progress_status_change = document.getElementsByName("progress_status_change")[0]
+    let end_data_time_change = document.getElementsByName("period_len_by_days_change")[0]
+
+    let change_task_form = document.querySelector('.change_task_form')
+    let task_list_row = document.querySelectorAll(".result-list-row")
+
+    let overlay = document.querySelector('.overlay')
+    let form_change_task_close_btn = document.querySelector('.form_change_task_close_btn')
+
+    form_change_task_close_btn.addEventListener("click", ev => {
+        change_task_form.classList.toggle("form_active")
+        overlay.classList.toggle("overlay_active")
+    })
+
+    for (let i = 0; i < task_list_row.length; i++) {
+        task_list_row[i].addEventListener("click", evt => {
+            change_task_form.classList.toggle("form_active")
+            change_task_form.id = task_list_row[i].id
+
+            overlay.classList.toggle("overlay_active")
+            let task_id = parseInt(task_list_row[i].id)
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: "{% url 'get_one_task' %}" + `?pk=${task_id}`,
+                processData: false,
+                success: function (response) {
+                    feedback_type_change.value = response['feedback_type']
+                    client_change.value = response['client']
+                    data_time_change.value = response['data_time']
+                    employee_change.value = response['employee']
+                    answer_change.value = response['answer']
+                    report_change.value = response['report']
+                    end_data_time_change.value = response['end_data_time']
+                    progress_status_change.value = response['progress_status']
+                },
+                error: function (response) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+        })
+    }
+
+    let save_change_form = document.querySelector(".save_change_form")
+    save_change_form.addEventListener('click', evt => {
+        let task_id = parseInt(change_task_form.id)
+        let data = {
+            "pk": task_id,
+            "feedback_type": feedback_type_change.value,
+            "client": client_change.value,
+            "data_time": data_time_change.value,
+            "employee": employee_change.value,
+            "answer": answer_change.value,
+            "report": report_change.value,
+            "end_data_time": end_data_time_change.value,
+            "progress_status": progress_status_change.value,
+            "csrfmiddlewaretoken": '{{ csrf_token }}'
+        }
+        $.ajax({
+            url: "{% url 'update_task_view' %}",
+            method: 'post',
+            dataType: 'html',
+            data: data,
+            success: function(data){
+                location.reload()
+            },
+            error: function (data) {
+                alert("Ошибка!")
+                location.reload()
+            }
+        });
+    })
+
+    delete_change_form = document.querySelector(".delete_change_form")
+    delete_change_form.addEventListener('click', evt => {
+
+
+            let task_id = parseInt(change_task_form.id)
+            let my_data = {
+                "task_id": task_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            }
+
+            $.ajax({
+                url: "{% url 'delete_task_btn' %}",
+                method: 'post',
+                dataType: 'html',
+                data: my_data,
+                success: function (data) {
+                    location.reload()
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                }
+            });
+
+    })
+</script>

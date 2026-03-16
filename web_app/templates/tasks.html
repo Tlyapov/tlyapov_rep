@@ -1,0 +1,532 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="container">
+
+<div class="result-list">
+            <div class="result-list-header" >
+                <div class="row fix_row">
+                    <div class="admin-content-left">
+                        <div class="input_container-horizontal">
+                            <h4 class="result-list-heading" style="font-size: 20px">Задачи</h4>
+                        </div>
+                    </div>
+
+                    <div class="admin-content-right">
+                        <div class="input_container-horizontal" id="filter_change" style="margin-right: 20px">
+                            <button class="table-button filter_btn" style="margin-right: 20px; background:#DEDEDE">Фильтр</button>
+                            <button class="my_button add_task_btn">Добавить задачу</button>
+                        </div>
+                    <div class="admin-content-right" style="text-align:right">
+                            <div id="filters">
+                                <select name="is_expired" class="form_select_input is_expired" style="max-width: 23% ; background:#DEDEDE" required>
+                                    <option value="all" >Все</option>
+                                    <option value="True" >Просроченные</option>
+                                </select>
+                                <select name="employee" class="form_select_input employee" style="max-width: 23% ; background:#DEDEDE" required>
+                                    <option value="all" >Без исполнителя</option>
+                                    {% for employee in employees_to_filter %}
+                                    <option value="{{employee.id}}" >{{employee}}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="pr_status" class="form_select_input pr_status" style="max-width: 23% ; background:#DEDEDE" required>
+                                    <option value="all" >Прогресс</option>
+                                    <option value="not_taken" >Не взят в работу</option>
+                                    <option value="in_progress">В работе</option>
+                                    <option value="done">Выполнено</option>
+                                </select>
+                                <select name="supervisor" class="form_select_input supervisor" style="max-width: 23% ; background:#DEDEDE" required>
+                                    <option value="all" >Руководитель</option>
+                                    {% for employee in employees_to_filter2 %}
+                                    <option value="{{employee.id}}" >{{employee}}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="form_close_btn close_filters" style="width:35px; height:35px; background:#DEDEDE ">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                                              fill="black"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+            <div class="result-list-table ">
+                <div class="result-list-table-header">
+                    <div class="row">
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Исполнитель
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Задача
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Дата постановки
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Статус выполнения
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Отчет по задаче
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                ФИО клиента
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Компания
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Ответственный руководитель
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-list-table-content ">
+                    {% for task, task_date,expired in tasks_table_list %}
+                        <div class="row align-items_center result-list-row message_row"  id="{{task.id}}">
+                            <div class="col-2 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red">
+
+                                    {% if task.employee.name == None %}
+                                    -
+                                    {% elif task.employee.name != None %}
+                                        {{ task.employee.surname }} {{ task.employee.name }}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                                <div class="result-list-text">
+                                    {% if task.employee.name == None %}
+                                    -
+                                    {% elif task.employee.name != None %}
+                                        {{ task.employee.surname }} {{ task.employee.name }}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%; color:red">
+                                   {% if task.audio_answer_id != null%}
+                                        <audio controls style="width:150px">
+                                            <source src="{{media_url}}{{ task.audio_answer.audio_answer }}" type="audio/ogg">
+                                        </audio>
+                                    {% else %}
+                                    {% if task.answer == None %}
+                                    -
+                                    {% elif task.answer != None %}
+                                        {{ task.answer }}
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                               <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                   {% if task.audio_answer_id != null%}
+                                        <audio controls style="width:150px">
+                                            <source src="{{ media_url }}{{ task.audio_answer.audio_answer }}" type="audio/ogg">
+                                        </audio>
+                                    {% else %}
+                                    {% if task.answer == None %}
+                                    -
+                                    {% elif task.answer != None %}
+                                        {{ task.answer }}
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red">
+                                    {% if task_date == None %}
+                                    -
+                                    {% elif task_date != None %}
+                                    {{ task_date }}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                               <div class="result-list-text">
+                                    {% if task_date == None %}
+                                    -
+                                    {% elif task_date != None %}
+                                    {{ task_date }}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red">
+                                    {% if task.progress_status == 'not_taken' %}
+                                    Не взят в работу
+                                    {% elif task.progress_status == 'in_progress' %}
+                                    В работе
+                                    {% elif task.progress_status == 'done' %}
+                                    Выполнено
+                                    {% elif task.progress_status == None %}
+                                    -
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                               <div class="result-list-text">
+                                    {% if task.progress_status == 'not_taken' %}
+                                    Не взят в работу
+                                    {% elif task.progress_status == 'in_progress' %}
+                                    В работе
+                                    {% elif task.progress_status == 'done' %}
+                                    Выполнено
+                                    {% elif task.progress_status == None %}
+                                    -
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red">
+                                    {% if task.report == None %}
+                                    -
+                                    {% elif task.report != None %}
+                                    {{task.report}}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                                <div class="result-list-text">
+                                    {% if task.report == None %}
+                                    -
+                                    {% elif task.report != None %}
+                                    {{task.report}}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red">
+                                    {% if task.client.name == None %}
+                                    -
+                                    {% elif task.client.name != None %}
+                                    {{task.client.name}}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                                <div class="result-list-text">
+                                    {% if task.client.name == None %}
+                                    -
+                                    {% elif task.client.name != None %}
+                                    {{task.client.name}}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red">
+                                    {% if task.client.company_name == None %}
+                                    -
+                                    {% elif task.client.company_name != None %}
+                                    {{ task.client.company_name }}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.client.company_name == None %}
+                                    -
+                                    {% elif task.client.company_name != None %}
+                                    {{ task.client.company_name }}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                {%if expired is True %}
+                                <div class="result-list-text" style="color:red" style="word-wrap: break-word; width: 100%">
+                                    {% if task.client.employee.name == None %}
+                                    -
+                                    {% elif task.client.employee.name != None %}
+                                        {{ task.client.employee.surname }} {{ task.client.employee.name }}
+                                    {% endif %}
+                                </div>
+                                {% elif expired is False %}
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.client.employee.name == None %}
+                                    -
+                                    {% elif task.client.employee.name != None %}
+                                        {{ task.client.employee.surname }} {{ task.client.employee.name }}
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                <div class="pagination_container">
+                    <a class="pagination_button" tabindex="-1" role="button"></a>
+                    <a class="pagination_button_right" tabindex="-1"
+                       role="button"></a>
+                </div>
+                </div>
+</div>
+    </section>
+{% include 'add_task.html' %}
+{% include 'change_task.html' %}
+{% include 'paginataion.html' %}
+<script defer>
+    let close_filters = document.querySelector('.close_filters')
+    let filter_btn = document.querySelector('.filter_btn')
+    document.getElementById('filters').hidden = true
+    document.getElementById('filter_change').hidden = false
+
+    async function elementUpdate(selector) {
+          try {
+            var html = await (await fetch(location.href)).text();
+            var newdoc = new DOMParser().parseFromString(html, 'text/html');
+            document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+            console.log('Элемент '+selector+' был успешно обновлен');
+            return true;
+          } catch(err) {
+            console.log('При обновлении элемента '+selector+' произошла ошибка:');
+            console.dir(err);
+            return false;
+          }
+        }
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    if (window.location.href.split("?").length > 1){
+        let is_expired = document.querySelector(".is_expired")
+        let employee = document.querySelector(".employee")
+        let pr_status = document.querySelector(".pr_status")
+        let supervisor = document.querySelector(".supervisor")
+
+        if(getUrlVars()["employee"] || getUrlVars()["is_expired"] || getUrlVars()["pr_status"] || getUrlVars()["supervisor"]) {
+            document.getElementById('filters').hidden = false
+            document.getElementById('filter_change').hidden = true
+
+            if (getUrlVars()["employee"]) {
+                employee.value = getUrlVars()["employee"]
+            } else {
+                employee.value = "all"
+            }
+            if (getUrlVars()["is_expired"]) {
+                is_expired.value = getUrlVars()["is_expired"]
+            } else {
+                is_expired.value = "all"
+            }
+            if (getUrlVars()["pr_status"]) {
+                pr_status.value = getUrlVars()["pr_status"]
+            } else {
+                pr_status.value = "all"
+            }
+            if (getUrlVars()["supervisor"]) {
+                supervisor.value = getUrlVars()["supervisor"]
+            } else {
+                supervisor.value = "all"
+            }
+        }
+    }
+
+    let employee = document.querySelector(".employee")
+    let is_expired = document.querySelector(".is_expired")
+    let pr_status = document.querySelector(".pr_status")
+    let supervisor = document.querySelector(".supervisor")
+     employee.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (is_expired.value !== "-1") {
+                if (is_expired.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&is_expired=" + is_expired.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        pr_status.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (is_expired.value !== "-1") {
+                if (is_expired.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&is_expired=" + is_expired.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        supervisor.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+
+            if (is_expired.value !== "-1") {
+                if (is_expired.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&is_expired=" + is_expired.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        is_expired.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+
+            if (is_expired.value !== "-1") {
+                if (is_expired.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&is_expired=" + is_expired.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+
+    filter_btn.addEventListener("click", ev => {
+            document.getElementById('filter_change').hidden = true
+            document.getElementById('filters').hidden = false
+    });
+    close_filters.addEventListener("click", ev => {
+            let current_location = window.location.href.split("?")[0]
+            window.location.href = current_location
+            document.getElementById('filter_change').hidden = false
+            document.getElementById('filters').hidden = true
+            })
+</script>
+<script defer type="text/javascript">
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: "{% url 'get_pagination_for_task' %}",
+        processData: false,
+        success: function (response) {
+            get_pagination(response)
+        },
+        error: function (response) {
+            alert("Ошибка")
+        }
+});
+</script>
+{% endblock %}

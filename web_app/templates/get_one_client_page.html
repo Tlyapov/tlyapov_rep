@@ -1,0 +1,455 @@
+{% load static %}
+
+ <div class="container" id="get_one_client">
+
+<div class="change_client_form">
+    <div class="admin-content">
+                <div class="container">
+                    <div class="row fix_row">
+
+                        <div class="admin-content-left">
+                            <div class="input_container" style="position: relative">
+                                <div>
+                                    <div class="flex-wrapper">
+                                        <a href="{% url 'clients' 1 %}" style="margin-bottom: -1px; padding-bottom: 12px; text-decoration: none; margin-right: 30px; color: #000; font-size: 12px; font-style: normal; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5;">< Вернуться назад</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-content-right">
+                            <div class="input_container">
+                                {% if user.is_superuser or user.role == 'admin' %}
+                                <button class="col table-button delete_change_form" >
+                                        Удалить
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+<div class="statistic-cards">
+                <div class="row">
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img star">
+                            </div>
+                            <div class="card_text">
+                                Оценка
+                            </div>
+                            <div class="card_value">
+                                {{client_rating}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img check_circle">
+                            </div>
+                            <div class="card_text">
+                                Пройденные опросы
+                            </div>
+                            <div class="card_value">
+                                {{done_surveys}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img clear_circle">
+                            </div>
+                            <div class="card_text">
+                                Не пройденные опросы
+                            </div>
+                            <div class="card_value">
+                                {{exept_surveys}}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+<div style="background:#DEDEDE; padding:20px; margin:0px 0px 30px">
+         <div class="row">
+            <div class="col input_container-horizontal">
+                <h4 class="result-list-heading" style="font-size: 20px">Информация</h4>
+            </div>
+        </div>
+        <div class="result-list-table" >
+            <div class="result-list-table">
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="result-list-text">
+                        <label class="input_label">ФИО</label>
+                        <input name="full_name_change" type="text" class="form_text_input form_text_input_one_student"
+                               placeholder="ФИО">
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="col result-list-text">
+                        <label class="input_label">Наименование компании</label>
+                        <input name="company_name_change" type="text" class="form_text_input form_text_input_one_student"
+                               placeholder="Наименование компании">
+                    </div>
+                    <div class="col result-list-text">
+                        <label class="input_label">Код клиента</label>
+                        <input name="client_code_change" type="text" class="form_text_input form_text_input_one_student"
+                               placeholder="Код клиента">
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="result-list-text">
+                        <label class="input_label">Должность</label>
+                        <input name="job_title_change" type="text" class="form_text_input form_text_input_one_student"
+                               placeholder="Должность">
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="result-list-text">
+                        <label class="input_label">Ответственный руководитель</label>
+                        <select name="employee_change" class="form_select_input margin_right_20" required>
+                            {% for employee in employees %}
+                                <option value="{{employee.id}}">{{employee.name}} {{employee.surname}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items_center " style="margin-bottom : 20px">
+                    <div class="col result-list-text">
+                        <label class="input_label">Телефон</label>
+                        <input name="phone_change" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" max="99999999999"  type="number" class="form_text_input form_text_input_one_student margin_right_20"
+                               placeholder="89008007060">
+                    </div>
+                    <div class="col result-list-text">
+                        <label class="input_label">Telegram ID</label>
+                        <input name="tg_id_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                               placeholder="@client">
+                    </div>
+                </div>
+                <button class="my_button save_change_form">
+                Сохранить
+            </button>
+            </div>
+        </div>
+</div>
+
+
+    <div class="result-list">
+                <div class="result-list-header">
+                    <div class="row fix_row">
+                        <div class="admin-content-left">
+                            <div class="input_container-horizontal">
+                                <h4 class="result-list-heading" style="font-size: 20px">История</h4>
+                            </div>
+                        </div>
+
+                        <div class="admin-content-right">
+                            <select name="fb_types" class="form_select_input margin_right_20 fb_types" required>
+                                    <option value="all" >Опросы и отзывы</option>
+                                    <option value="light">Светофор</option>
+                                    <option value="review">Отзыв</option>
+                                    <option value="offer">Предложение</option>
+                                </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-list-table ">
+                    <div class="result-list-table-header">
+                        <div class="row">
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Дата оценки
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Компания
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Должность
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Оценка
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Комментарий
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Статус выполнения
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Исполнитель
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Ответственный руководитель
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-list-table-content ">
+                    {% for task, task_date in answers %}
+                        <div class="row align-items_center message_row" style="border-bottom: 1px solid #C4C4C4; padding: 20px;">
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task_date == None %}
+                                    -
+                                    {% elif task_date != None %}
+                                    {{ task_date }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task.client.company_name == None %}
+                                    -
+                                    {% elif task.client.company_name != None %}
+                                    {{ task.client.company_name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task.client.job_title == None %}
+                                    -
+                                    {% elif task.client.job_title != None %}
+                                    {{ task.client.job_title }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                {% if task.is_light == True %}
+                                    {% if task.answer == '🟢 Все нравится!' %}
+                                    🟢
+                                    {% elif task.answer == '🟡 Есть вопросы.' %}
+                                    🟡
+                                    {% elif task.answer == '🔴 Очень плохо (' %}
+                                    🔴
+                                    {% elif task.answer == 'None' %}
+                                    -
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.is_light == True %}
+                                    -
+                                    {% else %}
+                                    {% if task.audio_answer_id != null%}
+                                        <audio controls style="width:150px">
+                                            <source src="{{ media_url }}{{ task.audio_answer.audio_answer }}" type="audio/ogg">
+                                        </audio>
+                                    {% else %}
+                                    {% if task.answer == None %}
+                                    -
+                                    {% elif task.answer != None %}
+                                        {{ task.answer }}
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task.progress_status == 'not_taken' %}
+                                    Не взят в работу
+                                    {% elif task.progress_status == 'in_progress' %}
+                                    В работе
+                                    {% elif task.progress_status == 'done' %}
+                                    Выполнено
+                                    {% elif task.progress_status == None %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ task.employee.name}} {{ task.employee.surname }}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ task.employee.name }} {{ task.employee.surname }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+ </div>
+
+
+<script defer>
+    document.getElementById('get_one_client').hidden = true
+    document.getElementById('all_clients').hidden = false
+
+    let client_code_change = document.getElementsByName("client_code_change")[0]
+    let full_name_change = document.getElementsByName("full_name_change")[0]
+    let company_name_change = document.getElementsByName("company_name_change")[0]
+    let job_title_change = document.getElementsByName("job_title_change")[0]
+    let employee_change = document.getElementsByName("employee_change")[0]
+    let phone_change = document.getElementsByName("phone_change")[0]
+    let tg_id_change = document.getElementsByName("tg_id_change")[0]
+
+    let change_client_form = document.querySelector('.change_client_form')
+    let client_list_row = document.querySelectorAll(".result-list-row")
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    if (window.location.href.split("?").length > 1){
+        let fb_types = document.querySelector(".fb_types")
+        if(getUrlVars()["client"]) {
+            document.getElementById('get_one_client').hidden = false
+            document.getElementById('all_clients').hidden = true
+            let client_id = getUrlVars()["client"]
+            if (getUrlVars()["fb_types"]) {
+                fb_types.value = getUrlVars()["fb_types"]
+            } else {
+                fb_types.value = "all"
+            }
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: "{% url 'get_one_client' %}" + `?pk=${client_id}`,
+                processData: false,
+                success: function (response) {
+                    client_code_change.value = response['client_code']
+                    full_name_change.value = response['full_name']
+                    company_name_change.value = response['company_name']
+                    employee_change.value = response['employee']
+                    job_title_change.value = response['job_title']
+                    phone_change.value = response['phone']
+                    tg_id_change.value = response['tg_id']
+                },
+                error: function (response) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+            }
+    }
+    let client_id = getUrlVars()["client"]
+    let fb_types = document.querySelector(".fb_types")
+    fb_types.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ("&client="  + client_id.toString())
+                } else {
+                    filter_str += ("&client="  + client_id.toString())+("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+
+    for (let i = 0; i < client_list_row.length; i++) {
+        client_list_row[i].addEventListener("click", evt => {
+
+            document.getElementById('get_one_client').hidden = false
+            document.getElementById('all_clients').hidden = true
+            change_client_form.id = client_list_row[i].id
+
+            let client_id = parseInt(client_list_row[i].id)
+
+
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            filter_str += ("&client=" + change_client_form.id.toString())
+            window.location.href = current_location += filter_str
+        })
+    }
+
+
+
+let save_change_form = document.querySelector(".save_change_form")
+    save_change_form.addEventListener('click', evt => {
+        let client_id = getUrlVars()["client"]
+        let data = {
+            "pk": client_id,
+            "client_code": client_code_change.value,
+            "name": full_name_change.value,
+            "company_name": company_name_change.value,
+            "employee": employee_change.value,
+            "job_title": job_title_change.value,
+            "phone": phone_change.value,
+            "tg_id": tg_id_change.value,
+            "csrfmiddlewaretoken": '{{ csrf_token }}'
+        }
+        $.ajax({
+            url: "{% url 'update_client_view' %}",
+            method: 'post',
+            dataType: 'html',
+            data: data,
+            success: function(data){
+                location.reload()
+            },
+            error: function (data) {
+                alert("Ошибка!")
+                location.reload()
+            }
+        });
+    })
+
+
+    delete_change_form = document.querySelector(".delete_change_form")
+    delete_change_form.addEventListener('click', evt => {
+            let client_id = getUrlVars()["client"]
+            let my_data = {
+                "client_id": client_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            }
+
+            $.ajax({
+                url: "{% url 'delete_client_btn' %}",
+                method: 'post',
+                dataType: 'html',
+                data: my_data,
+                success: function (data) {
+                        let current_location = window.location.href.split("?")[0]
+                        window.location.href = current_location
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                }
+            });
+
+
+    })
+</script>

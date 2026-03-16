@@ -1,0 +1,227 @@
+{% csrf_token %}
+<div class="custom_form change_light_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Опрос светофор</h1>
+            <button class="form_close_btn close_change_light_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label"> Название опроса</label>
+                <input name="survey_get_change_light" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Опрос № 1">
+            </div>
+        </div>
+            <div class="form_input_container" id="add_light">
+                {% for question_added_2, answers_2 in question_len_added_2 %}
+                <div >
+                    <h1 class="form-heading">Вопрос</h1>
+                    <label class="input_label">Тип вопроса</label>
+                        <select name="question_type" class="form_select_input margin_right_20" required>
+                                <option value="variants">Варианты</option>
+                        </select>
+                    <div class="form_input_container_child">
+                        <label class="input_label"> Вопрос</label>
+                        <input name="question_added_survey_light" type="text" class="form_text_input form_text_input_one_student"
+                               value="{{question_added_2.question}}" placeholder="Введите вопрос">
+                    </div>
+                    <div class="form_input_container_child">
+                        <label class="input_label">Варианты ответов</label>
+                        <div class="row">
+                            <div class="row" id="answers_div_added">
+                                {% for answer in answers_2 %}
+                                <div class="col-3 my_custom_text" style="margin:3px"> {{answer}} </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <h1 class="form-heading">Вопрос</h1>
+                <label class="input_label">Тип вопроса</label>
+                    <select name="question_type" class="form_select_input margin_right_20" required>
+                            <option value="variants">Варианты</option>
+                    </select>
+                <div class="form_input_container_child">
+                    <label class="input_label"> Вопрос</label>
+                    <input name="question_add_survey_light" type="text" class="form_text_input form_text_input_one_student"
+                           value="{{question_created.question}}" placeholder="Введите вопрос">
+                </div>
+                <div class="form_input_container_child">
+                    <label class="input_label">Варианты ответов</label>
+                    <div class="row">
+                        <div class="row" id="answers_div">
+                            {% for answer in created_answers %}
+                        <div class="col-3 my_custom_text" style="margin:3px"> {{answer}} </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+                <div style="text-align:right; margin-bottom:20px">
+                    <button class="form_close_btn add_answer_survey_form_btn" style="align:right">+</button>
+                </div>
+        <div>
+            <button class="my_button start_light_survey">
+                Сохранить
+            </button>
+            <button class="table-button add_question_change_light">
+                Добавить вопрос
+            </button>
+            <button class="table-button delete_question_change_light">
+                Удалить вопрос
+            </button>
+        </div>
+    </div>
+</div>
+
+<script defer>
+    document.addEventListener("DOMContentLoaded", e => {
+
+        let edit_btn = document.querySelector(".edit_btn")
+        let close_change_light_btn = document.querySelector('.close_change_light_btn')
+        let start_light_survey = document.querySelector('.start_light_survey')
+        let change_light_form = document.querySelector('.change_light_form')
+        let overlay = document.querySelector('.overlay')
+
+        let add_question_change_light = document.querySelector('.add_question_change_light')
+        let delete_question_change_light = document.querySelector('.delete_question_change_light')
+
+         async function elementUpdate(selector) {
+              try {
+                var html = await (await fetch(location.href)).text();
+                var newdoc = new DOMParser().parseFromString(html, 'text/html');
+                document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+                console.log('Элемент '+selector+' был успешно обновлен');
+                return true;
+              } catch(err) {
+                console.log('При обновлении элемента '+selector+' произошла ошибка:');
+                console.dir(err);
+                return false;
+              }
+            }
+
+
+            add_question_change_light.addEventListener("click", ev => {
+                        let data = {
+                                    "question": document.getElementsByName("question_add_survey_light")[0].value,
+                                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                                }
+                                $.ajax({
+                                    url: "{% url 'add_question' %}",
+                                    method: 'post',
+                                    dataType: 'html',
+                                    data: data,
+                                    success: function(data){
+                                        elementUpdate('div#add_light');
+                                    },
+                                    error: function (data) {
+                                        alert("Ошибка!")
+                                        elementUpdate('div#add_light');
+                                    }
+                                });
+                    })
+
+
+            delete_question_change_light.addEventListener("click", ev => {
+            let data = {
+                        "csrfmiddlewaretoken": '{{ csrf_token }}'
+                    }
+                    $.ajax({
+                        url: "{% url 'delete_question' %}",
+                        method: 'post',
+                        dataType: 'html',
+                        data: data,
+                        success: function(data){
+                            elementUpdate('div#add_light');
+                        },
+                        error: function (data) {
+                            alert("Ошибка!")
+                            elementUpdate('div#add_light');
+                        }
+                    });
+        })
+
+        let survey_get_change_light = document.getElementsByName("survey_get_change_light")[0]
+        let question_change_light = document.getElementsByName("question_change_light_light")[0]
+
+        edit_btn.addEventListener("click", ev => {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: "{% url 'get_light_survey' %}",
+                processData: false,
+                success: function (response) {
+                    survey_get_change_light.value = response['survey'];
+                    elementUpdate('div#add_light');
+                    change_light_form.classList.toggle("form_active")
+                    overlay.classList.toggle("overlay_active")
+                },
+                error: function (response) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+        })
+        close_change_light_btn.addEventListener("click", ev => {
+            change_light_form.classList.toggle("form_active")
+            overlay.classList.toggle("overlay_active")
+            let data = {
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                }
+            $.ajax({
+                    url: "{% url 'delete_question_all' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        alert("Ошибка!")
+                        location.reload()
+                    }
+                });
+        })
+
+
+        start_light_survey.addEventListener("click", ev => {
+            let data = {
+                    "survey": document.getElementsByName("survey_get_change_light")[0].value,
+                    "question": document.getElementsByName("question_add_survey_light")[0].value,
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                }
+                let confirm = true
+            for(let key in data){
+                if (data[key] === "") {
+                    confirm = false
+                }
+            }
+            if (confirm) {
+                $.ajax({
+                    url: "{% url 'change_light_survey' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        alert("Ошибка!")
+                        location.reload()
+                    }
+                });
+            } else {
+                alert("Заполните все поля")
+            }
+        })
+    })
+</script>

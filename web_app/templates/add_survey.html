@@ -1,0 +1,330 @@
+{% csrf_token %}
+<div class="custom_form add_survey_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Создать опрос</h1>
+            <button class="form_close_btn form_add_survey_close_btn_sec">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label"> Название опроса</label>
+                <input name="add_survey_name" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Опрос № 1">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Клиенты</label>
+                <div class="row">
+                    <div  class="row" id="clients_add_survey_update">
+                        {% for survey_client in survey_clients_2 %}
+                    <div class="col-3 my_custom_text"  style="margin:3px">{{survey_client.client.name}}</div>
+                    {% endfor %}
+                    </div>
+                    <div style="text-align:right">
+                        <button class="form_close_btn add_client_to_add_survey" style="align:right">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Дата начала</label>
+                <input name="add_survey_start_time" type="date" class="form_text_input form_text_input_one_student"
+                       placeholder="">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Время начала</label>
+                <input name="add_survey_start_time_hour" type="time" class="form_text_input form_text_input_one_student"
+                       placeholder="">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Дата окончания</label>
+                <input name="add_survey_end_time" type="date" class="form_text_input form_text_input_one_student"
+                       placeholder="">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Переодичность в днях</label>
+                <input name="add_survey_periodicity" onkeyup="this.value = this.value.replace(/-/g,'');" type="number" class="form_text_input form_text_input_one_student"
+                       placeholder="Укажите число">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Активен</label>
+                <select name="add_survey_is_active" class="form_select_input margin_right_20" required>
+                        <option value="{{True}}">Да</option>
+                        <option value="{{False}}">Нет</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form_input_container" id="add_questions">
+            {% for question_added, answers in question_len_added %}
+            <h1 class="form-heading">Вопрос</h1>
+            <label class="input_label">Тип вопроса</label>
+                <select name="question_type" class="form_select_input margin_right_20" required>
+                        <option value="variants">Варианты</option>
+                </select>
+            <div class="form_input_container_child">
+                <label class="input_label"> Вопрос</label>
+                <input name="question_added_survey" type="text" class="form_text_input form_text_input_one_student"
+                       value="{{question_added.question}}" placeholder="Введите вопрос">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Варианты ответов</label>
+                <div class="row">
+                    <div class="row" id="answers_div_added">
+                        {% for answer in answers %}
+                        <div class="col-3 my_custom_text" style="margin:3px"> {{answer}} </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <h1 class="form-heading">Вопрос</h1>
+            <label class="input_label">Тип вопроса</label>
+                <select name="question_type" class="form_select_input margin_right_20" required>
+                        <option value="variants">Варианты</option>
+                </select>
+            <div class="form_input_container_child">
+                <label class="input_label"> Вопрос</label>
+                <input name="question_add_survey" type="text" class="form_text_input form_text_input_one_student"
+                       value="{{question_created.question}}" placeholder="Введите вопрос">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Варианты ответов</label>
+                <div class="row">
+                    <div class="row" id="answers_div_add">
+                        {% for answer in created_answers %}
+                    <div class="col-3 my_custom_text" style="margin:3px"> {{answer}} </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:right; margin-bottom:20px">
+            <button class="form_close_btn add_answer_survey_form_btn" style="align:right">+</button>
+        </div>
+
+        <div id="add_survey_buttons">
+            <button class="my_button start_add_survey">
+                Инициировать
+            </button>
+            <button class="nav-button add_question_btn">
+                Добавить вопрос
+            </button>
+            <button class="nav-button delete_question_btn">
+                Удалить вопрос
+            </button>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% include 'add_answer_survey_form.html'%}
+{% include 'add_client_survey_add_form.html'%}
+<script>
+        var today = new Date();
+        var minutes = today.getMinutes();
+        var hour = today.getHours();
+        if(hour < 10){
+            hour='0' + hour
+        }
+        if(minutes < 10){
+            minutes='0' + minutes
+        }
+        now_hour = hour + ':' + minutes;
+        document.getElementsByName("add_survey_start_time_hour")[0].setAttribute("min", now_hour);
+        document.getElementsByName("add_survey_start_time_hour")[0].value = now_hour;
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if(dd < 10){
+          dd='0' + dd
+        }
+        if(mm < 10){
+          mm='0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementsByName("add_survey_start_time")[0].setAttribute("min", today);
+        document.getElementsByName("add_survey_start_time")[0].value = today;
+        var today = new Date();
+        var dd = today.getDate() + 1;
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if(dd < 10){
+          dd='0' + dd
+        }
+        if(mm < 10){
+          mm='0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementsByName("add_survey_end_time")[0].setAttribute("min", today);
+        document.getElementsByName("add_survey_periodicity")[0].value = 0;
+        document.getElementsByName("add_survey_end_time")[0].value = today;
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", e => {
+        let form = document.querySelector('.add_survey_form')
+        let overlay = document.querySelector('.overlay')
+
+
+
+        let add_survey_btn = document.querySelector(".add_survey_btn")
+        let close_btn = document.querySelector('.form_add_survey_close_btn_sec')
+        let add_question_btn = document.querySelector('.add_question_btn')
+        let delete_question_btn = document.querySelector('.delete_question_btn')
+        let start_add_survey = document.querySelector('.start_add_survey')
+
+        async function elementUpdate(selector) {
+              try {
+                var html = await (await fetch(location.href)).text();
+                var newdoc = new DOMParser().parseFromString(html, 'text/html');
+                document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+                console.log('Элемент '+selector+' был успешно обновлен');
+                return true;
+              } catch(err) {
+                console.log('При обновлении элемента '+selector+' произошла ошибка:');
+                console.dir(err);
+                return false;
+              }
+            }
+
+
+            add_question_btn.addEventListener("click", ev => {
+                        let data = {
+                                    "question": document.getElementsByName("question_add_survey")[0].value,
+                                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                                }
+                                $.ajax({
+                                    url: "{% url 'add_question' %}",
+                                    method: 'post',
+                                    dataType: 'html',
+                                    data: data,
+                                    success: function(data){
+                                        elementUpdate('div#add_questions');
+                                    },
+                                    error: function (data) {
+                                        alert("Ошибка!")
+                                        elementUpdate('div#add_questions');
+                                    }
+                                });
+                    })
+
+
+            delete_question_btn.addEventListener("click", ev => {
+            let data = {
+                        "csrfmiddlewaretoken": '{{ csrf_token }}'
+                    }
+                    $.ajax({
+                        url: "{% url 'delete_question' %}",
+                        method: 'post',
+                        dataType: 'html',
+                        data: data,
+                        success: function(data){
+                            elementUpdate('div#add_questions');
+                        },
+                        error: function (data) {
+                            alert("Ошибка!")
+                            elementUpdate('div#add_questions');
+                        }
+                    });
+        })
+
+
+            add_survey_btn.addEventListener("click", ev => {
+                form.classList.toggle("form_active")
+                overlay.classList.toggle("overlay_active")
+
+                let data = {
+                            "csrfmiddlewaretoken": '{{ csrf_token }}'
+                        }
+                        $.ajax({
+                            url: "{% url 'add_question_to_survey' %}",
+                            method: 'post',
+                            dataType: 'html',
+                            data: data,
+                            success: function(data){
+                                elementUpdate('div#add_questions');
+                            },
+                            error: function (data) {
+                                alert("Ошибка!")
+                                elementUpdate('div#add_questions');
+                            }
+                        });
+            })
+
+
+        close_btn.addEventListener("click", ev => {
+            form.classList.toggle("form_active")
+            overlay.classList.toggle("overlay_active")
+            let data = {
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                }
+                $.ajax({
+                    url: "{% url 'reset_clients' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        location.reload()
+                    }
+                });
+                $.ajax({
+                    url: "{% url 'delete_question_all' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        location.reload()
+                    }
+                });
+        })
+        start_add_survey.addEventListener("click", ev => {
+            let data_add_survey = {
+                    "survey": document.getElementsByName("add_survey_name")[0].value,
+                    "start_time": document.getElementsByName("add_survey_start_time")[0].value,
+                    "end_time": document.getElementsByName("add_survey_end_time")[0].value,
+                    "periodicity": document.getElementsByName("add_survey_periodicity")[0].value,
+                    "is_active": document.getElementsByName("add_survey_is_active")[0].value,
+                    "question": document.getElementsByName("question_add_survey")[0].value,
+                    "time_hour": document.getElementsByName("add_survey_start_time_hour")[0].value,
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                }
+
+            let confirm = true
+            for(let key_add in data_add_survey){
+                if (data_add_survey[key_add] === "") {
+                    confirm = false
+                }
+            }
+            if (confirm) {
+                $.ajax({
+                    url: "{% url 'start_add_survey' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data_add_survey,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        alert("Ошибка!")
+                        location.reload()
+                    }
+                });
+            } else {
+                alert("Заполните все поля")
+            }
+
+        })
+})
+</script>

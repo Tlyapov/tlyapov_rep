@@ -1,0 +1,1313 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="container">
+        <div class="admin-content">
+            <div class="container">
+                <div class="row fix_row">
+                    <div class="admin-content-left">
+                        <div class="input_container" style="position: relative">
+                            <div class="form_input_container_child">
+                                <select name="fb_types" class="form_select_input margin_right_20 fb_types" required>
+                                    <option value="all" >Опросы и отзывы</option>
+                                    <option value="light">Светофор</option>
+                                    <option value="review">Отзыв</option>
+                                    <option value="review_by_employee">Отзыв о сотруднике</option>
+                                    <option value="offer">Предложение</option>
+                                    <option value="auto_survey">Автоматизация опросов</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="admin-content-right">
+                    <div class="input_container">
+                        <div>
+                            <button class="nav-button start_survey_btn">Инициировать опрос</button>
+                        </div>
+                    </div>
+                    <div class="input_container">
+                        <div class="input_container-horizontal">
+                            <button class="my_button add_survey_btn">Создать опрос</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% if h4_fb_type != 'auto_survey'%}
+<div class="result-list">
+            <div class="result-list-header">
+                <div class="row fix_row">
+                    <div class="admin-content-left">
+                        <div class="input_container-horizontal" style="margin-bottom: 15px">
+                            {% if h4_fb_type == 'light'%}
+                            <h4 class="result-list-heading" style="font-size: 20px">Опрос светофор</h4>
+                            {% elif h4_fb_type == 'review' %}
+                            <h4 class="result-list-heading" style="font-size: 20px">Отзывы</h4>
+                            {% elif h4_fb_type == 'review_by_employee' %}
+                            <h4 class="result-list-heading" style="font-size: 20px">Отзывы по сотруднику</h4>
+                            {% elif h4_fb_type == 'offer' %}
+                            <h4 class="result-list-heading" style="font-size: 20px">Предложение</h4>
+                            {% elif h4_fb_type == 'all' %}
+                            <h4 class="result-list-heading" style="font-size: 20px">Опросы и отзывы</h4>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="admin-content-right">
+                        <div class="input_container-horizontal">
+                            <div style="margin-right: 5px">
+                                <button class="form_close_btn refresh_filter" id="refresh_filter">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                                              fill="black"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="input_container-horizontal" style="margin-right: 20px">
+                                <input name="select_date" type="date" class="form_text_input form_text_input_one_student select_date"
+                                placeholder="">
+                            </div>
+                            <div class="input_container-horizontal" style="margin-right: 20px">
+                                <input id="select_date_2" name="select_date_2" type="date" class="form_text_input form_text_input_one_student select_date_2"
+                                placeholder="">
+                            </div>
+                            <div id="filter_change">
+                                <a id="upload_exel" href="{% url 'download_reviews_excel' 0 %}" style="margin-right:20px "><button class="table-button upload_exel" style="background:#DEDEDE">Выгрузить в Excel</button></a>
+                                <button class="table-button filter_btn" style="margin-right: 20px ; background:#DEDEDE">Фильтр</button>
+                                <button class="table-button edit_btn" style="background:#DEDEDE">Редактировать</button>
+                            </div>
+                        </div>
+                        <div class="admin-content-right" style="text-align:right">
+                            <div id="filters">
+                                <select name="client_code" class="form_select_input client_code" style="max-width: 17% ; background:#DEDEDE" required>
+                                    <option value="all" >Код клиента</option>
+                                    {% for client in clients %}
+                                    <option value="{{client.id}}" >{{client.client_code}}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="light_answer" class="form_select_input light_answer" style="max-width: 15% ; background:#DEDEDE" required>
+                                    <option value="all" >Оценка</option>
+                                    <option value="perf" >🟢 Все нравится!</option>
+                                    <option value="good">🟡 Есть вопросы.</option>
+                                    <option value="bad">🔴 Очень плохо (</option>
+                                </select>
+                                <select name="employee" class="form_select_input employee" style="max-width: 20% ; background:#DEDEDE " required>
+                                    <option value="all" >Исполнитель</option>
+                                    {% for employee in employees_to_filter %}
+                                    <option value="{{employee.id}}" >{{employee}}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="pr_status" class="form_select_input pr_status" style="max-width: 20% ; background:#DEDEDE" required>
+                                    <option value="all" >Прогресс</option>
+                                    <option value="not_taken" >Не взят в работу</option>
+                                    <option value="in_progress">В работе</option>
+                                    <option value="done">Выполнено</option>
+                                </select>
+                                <select name="supervisor" class="form_select_input supervisor" style="max-width: 20% ; background:#DEDEDE" required>
+                                    <option value="all" >Руководитель</option>
+                                    {% for employee in employees_to_filter2 %}
+                                    <option value="{{employee.id}}" >{{employee}}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="form_close_btn close_filters" style="width:35px; height:35px ; background:#DEDEDE">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                                              fill="black"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-list-table ">
+                <div class="result-list-table-header">
+                    <div class="row">
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Код клиента
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Компания
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                ФИО
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Должность
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Оценка
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Комментарий
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Дата оценки
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Статус выполнения
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Исполнитель
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Ответственный руководитель
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-list-table-content ">
+                    {% for task,task_date in surveys_and_reviews_table_list %}
+                        <div class="row align-items_center result-list-row message_row" id="">
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task.client.client_code == None %}
+                                    -
+                                    {% elif task.client.client_code != None %}
+                                    {{ task.client.client_code }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.client.company_name == None %}
+                                    -
+                                    {% elif task.client.company_name != None %}
+                                    {{ task.client.company_name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.client.name == None %}
+                                    -
+                                    {% elif task.client.name != None %}
+                                    {{task.client.name}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.client.job_title == None %}
+                                    -
+                                    {% elif task.client.job_title != None %}
+                                    {{ task.client.job_title }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task.is_light == True %}
+                                    {% if task.answer == '🟢 Все нравится!' %}
+                                    🟢
+                                    {% elif task.answer == '🟡 Есть вопросы.' %}
+                                    🟡
+                                    {% elif task.answer == '🔴 Очень плохо (' %}
+                                    🔴
+                                    {% elif task.answer == 'None' %}
+                                    -
+                                    {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.is_light == True %}
+                                    -
+                                    {% else %}
+                                        {% if task.audio_answer_id != null%}
+                                        <audio style="width:150px">
+                                            <source src="{{media_url}}{{task.audio_answer.audio_answer}}" type="audio/ogg">
+                                        </audio><button onclick="this.previousSibling.play()" style="border-radius: 5px;justify-content: center;">▶</button>
+                                    {% else %}
+                                    {% if task.answer == None %}
+                                    -
+                                    {% elif task.answer != None %}
+                                        {{ task.answer }}
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{ task_date }}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if task.progress_status == 'not_taken' %}
+                                    Не взят в работу
+                                    {% elif task.progress_status == 'in_progress' %}
+                                    В работе
+                                    {% elif task.progress_status == 'done' %}
+                                    Выполнено
+                                    {% elif task.progress_status == None %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if task.employee.name == None %}
+                                    -
+                                    {% elif task.employee.name != None %}
+                                        {{ task.employee.surname }} {{ task.employee.name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {{ task.client.employee.surname }} {{ task.client.employee.name }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                <div class="pagination_container">
+                    <a class="pagination_button" tabindex="-1" role="button"></a>
+                    <a class="pagination_button_right" tabindex="-1"
+                       role="button"></a>
+                </div>
+
+                </div>
+</div>
+    {% else %}
+    <div class="result-list">
+                <div class="result-list-header">
+                    <div class="row fix_row">
+                        <div class="admin-content-left">
+                            <div class="input_container-horizontal" style="margin-bottom: 15px">
+                                <h4 class="result-list-heading" style="font-size: 20px">Автоматизация опросов</h4>
+                            </div>
+                        </div>
+                        <div class="admin-content-right" style="text-align:right">
+                            <div class="input_container-horizontal">
+                                <div id="auto_filter_change">
+                                    <button class="table-button auto_filter_btn" style="margin-right: 20px ; background:#DEDEDE">Фильтр</button>
+                                </div>
+                            <div class="admin-content-right" style="text-align:right">
+                                <div id="auto_filters">
+                                    <select name="auto_client_name" class="form_select_input auto_client_name" style="max-width: 18% ; background:#DEDEDE" required>
+                                        <option value="all" >Клиент</option>
+                                        {% for client in clients %}
+                                        <option value="{{client.id}}" >{{client.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="auto_client_code" class="form_select_input auto_client_code" style="max-width: 20% ; background:#DEDEDE" required>
+                                        <option value="all" >Код клиента</option>
+                                        {% for client in clients %}
+                                        <option value="{{client.id}}" >{{client.client_code}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="servey_type" class="form_select_input servey_type" style="max-width: 20% ; background:#DEDEDE" required>
+                                        <option value="all" >Вид опроса</option>
+                                        {% for survey in surveys %}
+                                        <option value="{{survey.id}}" >{{survey.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="servey_status" class="form_select_input servey_status" style="max-width: 20% ; background:#DEDEDE" required>
+                                        <option value="all" >Статус опроса</option>
+                                        <option value="active" >Активен</option>
+                                        <option value="not_active" >Завершен</option>
+                                        <option value="stopped" >Прекращен</option>
+
+                                    </select>
+                                    <button class="form_close_btn auto_close_filters" style="width:35px; height:35px ; background:#DEDEDE">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                                                  fill="black"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="result-list-table ">
+                    <div class="result-list-table-header">
+                        <div class="row">
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Клиент
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Вид опроса
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Дата начала
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Время начала
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Дата окончания
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Настроенная периодичность
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text" style="margin-left: 9px">
+                                    Количество направленных опросов
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Количество пройденных опросов
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Конверсия
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-header-text">
+                                    Статус
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-list-table-content ">
+                    {% for key, survey in time_run_survey.items %}
+                            <div class="row align-items_center result-list-row message_row" id="">
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                        {{ survey.client.name }}
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.survey.survey.name }}
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.survey.start_time }}
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.survey.send_time }}
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.survey.end_time }}
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.survey.periodicity }}
+                                    </div>
+                                </div>
+                                <div class="col-2 result-list-sort-container">
+                                    <div class="result-list-text" style="margin-left: 9px">
+                                        {{ survey.send_surveys }}
+                                    </div>
+                                </div>
+                                <div class="col-2 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.done_surveys }}
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {{ survey.conversion }} %
+                                    </div>
+                                </div>
+                                <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                        {% if survey.status == 'active' %}
+                                            <button class="my_button stop_auto_survey" id='{{ survey.survey.id }}' style="max-height: 50px; max-width: 80px; font-size: 9px;  display: flex; align-items: center; justify-content: center;">Прекратить</button>
+                                        {% elif survey.status == 'not_active' %}
+                                            Завершен
+                                        {% elif survey.status == 'stopped' %}
+                                            Прекращен
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                    <div class="pagination_container">
+                        <a class="pagination_button" tabindex="-1" role="button"></a>
+                        <a class="pagination_button_right" tabindex="-1"
+                           role="button"></a>
+                    </div>
+
+                    </div>
+    </div>
+{% endif %}
+
+        </section>
+
+{% include 'start_survey.html' %}
+{% include 'change_light.html' %}
+{% include 'add_survey.html' %}
+{% include 'paginataion.html' %}
+
+<script>
+let stop_auto_survey = document.querySelectorAll(".stop_auto_survey")
+for (let i = 0; i < stop_auto_survey.length; i++) {
+        stop_auto_survey[i].addEventListener("click", ev => {
+            let data = {
+                    "survey_id": stop_auto_survey[i].id,
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                }
+                $.ajax({
+                    url: "{% url 'stop_auto_survey' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        alert("Ошибка!")
+                        location.reload()
+                    }
+                });
+        })
+}
+</script>
+
+
+<script defer>
+    let select_date = document.querySelector(".select_date")
+    let select_date_2 = document.querySelector(".select_date_2")
+    let refresh_filter = document.querySelector('.refresh_filter')
+    document.getElementById('refresh_filter').hidden = true
+    document.getElementById('select_date_2').hidden = true
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    if (window.location.href.split("?").length > 1){
+        let select_date = document.querySelector(".select_date")
+        let select_date_2 = document.querySelector(".select_date_2")
+
+        if(getUrlVars()["select_date"]  || getUrlVars()["select_date_2"])  {
+            document.getElementById('refresh_filter').hidden = false
+            document.getElementById('select_date_2').hidden = false
+
+            if (getUrlVars()["select_date"]) {
+                select_date.value = getUrlVars()["select_date"]
+                upload_exel.href = upload_exel.href + ("&select_date=" + select_date.value.toString())
+            }
+            if (getUrlVars()["select_date_2"]) {
+                select_date_2.value = getUrlVars()["select_date_2"]
+                upload_exel.href = upload_exel.href + ("&select_date_2=" + select_date_2.value.toString())
+            }
+        }
+    }
+    refresh_filter.addEventListener("click", ev => {
+            document.getElementById('refresh_filter').hidden = true
+            let current_location = window.location.href.split("?")[0]
+            window.location.href = current_location
+            })
+
+     select_date.addEventListener("change", evt => {
+            document.getElementById('refresh_filter').hidden = false
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (select_date.value !== "-1") {
+                filter_str += ("&select_date=" + select_date.value.toString())
+            }
+            if (select_date_2.value !== "-1") {
+                filter_str += ("&select_date_2=" + select_date_2.value.toString())
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+    select_date_2.addEventListener("change", evt => {
+            document.getElementById('refresh_filter').hidden = false
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (select_date_2.value !== "-1") {
+                filter_str += ("&select_date_2=" + select_date_2.value.toString())
+            }
+            if (select_date.value !== "-1") {
+                filter_str += ("&select_date=" + select_date.value.toString())
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+</script>
+
+<script defer>
+    let close_filters = document.querySelector('.close_filters')
+    let filter_btn = document.querySelector('.filter_btn')
+    document.getElementById('filters').hidden = true
+    document.getElementById('filter_change').hidden = false
+
+    async function elementUpdate(selector) {
+          try {
+            var html = await (await fetch(location.href)).text();
+            var newdoc = new DOMParser().parseFromString(html, 'text/html');
+            document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+            console.log('Элемент '+selector+' был успешно обновлен');
+            return true;
+          } catch(err) {
+            console.log('При обновлении элемента '+selector+' произошла ошибка:');
+            console.dir(err);
+            return false;
+          }
+        }
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    if (window.location.href.split("?").length > 1){
+        let employee = document.querySelector(".employee")
+        let pr_status = document.querySelector(".pr_status")
+        let supervisor = document.querySelector(".supervisor")
+        let fb_types = document.querySelector(".fb_types")
+        let client_code = document.querySelector(".client_code")
+        let light_answer = document.querySelector(".light_answer")
+
+        if(getUrlVars()["employee"] || getUrlVars()["pr_status"] || getUrlVars()["supervisor"] || getUrlVars()["client_code"] || getUrlVars()["light_answer"]) {
+            document.getElementById('filters').hidden = false
+            document.getElementById('filter_change').hidden = true
+
+            if (getUrlVars()["fb_types"]) {
+                fb_types.value = getUrlVars()["fb_types"]
+            } else {
+                fb_types.value = "all"
+            }
+            if (getUrlVars()["client_code"]) {
+                client_code.value = getUrlVars()["client_code"]
+            } else {
+                client_code.value = "all"
+            }
+            if (getUrlVars()["light_answer"]) {
+                light_answer.value = getUrlVars()["light_answer"]
+            } else {
+                light_answer.value = "all"
+            }
+            if (getUrlVars()["employee"]) {
+                employee.value = getUrlVars()["employee"]
+            } else {
+                employee.value = "all"
+            }
+            if (getUrlVars()["employee"]) {
+                employee.value = getUrlVars()["employee"]
+            } else {
+                employee.value = "all"
+            }
+            if (getUrlVars()["pr_status"]) {
+                pr_status.value = getUrlVars()["pr_status"]
+            } else {
+                pr_status.value = "all"
+            }
+            if (getUrlVars()["supervisor"]) {
+                supervisor.value = getUrlVars()["supervisor"]
+            } else {
+                supervisor.value = "all"
+            }
+        } else {
+            if (getUrlVars()["fb_types"]) {
+                fb_types.value = getUrlVars()["fb_types"]
+            } else {
+                fb_types.value = "all"
+            }
+        }
+    }
+
+    let employee = document.querySelector(".employee")
+    let pr_status = document.querySelector(".pr_status")
+    let supervisor = document.querySelector(".supervisor")
+    let fb_types = document.querySelector(".fb_types")
+    let client_code = document.querySelector(".client_code")
+    let light_answer = document.querySelector(".light_answer")
+    fb_types.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (client_code.value !== "-1") {
+                if (client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&client_code=" + client_code.value.toString())
+                }
+            }
+            if (light_answer.value !== "-1") {
+                if (light_answer.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&light_answer=" + light_answer.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+     employee.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (client_code.value !== "-1") {
+                if (client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&client_code=" + client_code.value.toString())
+                }
+            }
+            if (light_answer.value !== "-1") {
+                if (light_answer.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&light_answer=" + light_answer.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        pr_status.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (client_code.value !== "-1") {
+                if (client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&client_code=" + client_code.value.toString())
+                }
+            }
+            if (light_answer.value !== "-1") {
+                if (light_answer.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&light_answer=" + light_answer.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        supervisor.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (client_code.value !== "-1") {
+                if (client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&client_code=" + client_code.value.toString())
+                }
+            }
+            if (light_answer.value !== "-1") {
+                if (light_answer.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&light_answer=" + light_answer.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        light_answer.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (client_code.value !== "-1") {
+                if (client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&client_code=" + client_code.value.toString())
+                }
+            }
+            if (light_answer.value !== "-1") {
+                if (light_answer.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&light_answer=" + light_answer.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+        client_code.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (client_code.value !== "-1") {
+                if (client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&client_code=" + client_code.value.toString())
+                }
+            }
+            if (light_answer.value !== "-1") {
+                if (light_answer.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&light_answer=" + light_answer.value.toString())
+                }
+            }
+            if (employee.value !== "-1") {
+                if (employee.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee=" + employee.value.toString())
+                }
+            }
+            if (pr_status.value !== "-1") {
+                if (pr_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&pr_status=" + pr_status.value.toString())
+                }
+            }
+            if (supervisor.value !== "-1") {
+                if (supervisor.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&supervisor=" + supervisor.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+
+
+    filter_btn.addEventListener("click", ev => {
+            document.getElementById('filter_change').hidden = true
+            document.getElementById('filters').hidden = false
+    });
+    close_filters.addEventListener("click", ev => {
+        if (getUrlVars()["fb_types"]) {
+                let current_location = window.location.href.split("?")[0]
+                window.location.href = current_location + "?&fb_types=" + fb_types.value.toString()
+                document.getElementById('filter_change').hidden = false
+                document.getElementById('filters').hidden = true
+            } else {
+                let current_location = window.location.href.split("?")[0]
+                window.location.href = current_location
+                document.getElementById('filter_change').hidden = false
+                document.getElementById('filters').hidden = true
+            }
+            })
+
+</script>
+
+
+    <script defer>
+    let auto_close_filters = document.querySelector('.auto_close_filters')
+    let auto_filter_btn = document.querySelector('.auto_filter_btn')
+    document.getElementById('auto_filters').hidden = true
+    document.getElementById('auto_filter_change').hidden = false
+
+    async function elementUpdate(selector) {
+          try {
+            var html = await (await fetch(location.href)).text();
+            var newdoc = new DOMParser().parseFromString(html, 'text/html');
+            document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+            console.log('Элемент '+selector+' был успешно обновлен');
+            return true;
+          } catch(err) {
+            console.log('При обновлении элемента '+selector+' произошла ошибка:');
+            console.dir(err);
+            return false;
+          }
+        }
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    if (window.location.href.split("?").length > 1){
+        let fb_types = document.querySelector(".fb_types")
+        let auto_client_code = document.querySelector(".auto_client_code")
+        let auto_client_name = document.querySelector(".auto_client_name")
+        let servey_type = document.querySelector(".servey_type")
+        let servey_status = document.querySelector(".servey_status")
+        if(getUrlVars()["auto_client_code"] || getUrlVars()["auto_client_name"] || getUrlVars()["servey_type"] || getUrlVars()["servey_status"]) {
+            document.getElementById('auto_filters').hidden = false
+            document.getElementById('auto_filter_change').hidden = true
+
+            if (getUrlVars()["auto_client_code"]) {
+                auto_client_code.value = getUrlVars()["auto_client_code"]
+            } else {
+                auto_client_code.value = "all"
+            }
+            if (getUrlVars()["servey_type"]) {
+                servey_type.value = getUrlVars()["servey_type"]
+            } else {
+                servey_type.value = "all"
+            }
+            if (getUrlVars()["servey_status"]) {
+                servey_status.value = getUrlVars()["servey_status"]
+            } else {
+                servey_status.value = "all"
+            }
+            if (getUrlVars()["fb_types"]) {
+                fb_types.value = getUrlVars()["fb_types"]
+            } else {
+                fb_types.value = "all"
+            }
+            if (getUrlVars()["auto_client_name"]) {
+                auto_client_name.value = getUrlVars()["auto_client_name"]
+            } else {
+                auto_client_name.value = "all"
+            }
+        } else {
+            if (getUrlVars()["fb_types"]) {
+                fb_types.value = getUrlVars()["fb_types"]
+            } else {
+                fb_types.value = "all"
+            }
+        }
+    }
+
+    let auto_client_code = document.querySelector(".auto_client_code")
+    let auto_client_name = document.querySelector(".auto_client_name")
+    let servey_type = document.querySelector(".servey_type")
+    let servey_status = document.querySelector(".servey_status")
+    let fb_types_2 = document.querySelector(".fb_types")
+    fb_types_2.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let fb_types = document.querySelector(".fb_types")
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+    })
+    auto_client_code.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let fb_types = document.querySelector(".fb_types")
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (auto_client_code.value !== "-1") {
+                if (auto_client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_code=" + auto_client_code.value.toString())
+                }
+            }
+            if (auto_client_name.value !== "-1") {
+                if (auto_client_name.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_name=" + auto_client_name.value.toString())
+                }
+            }
+            if (servey_type.value !== "-1") {
+                if (servey_type.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_type=" + servey_type.value.toString())
+                }
+            }
+            if (servey_status.value !== "-1") {
+                if (servey_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_status=" + servey_status.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+    })
+    auto_client_name.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let fb_types = document.querySelector(".fb_types")
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (auto_client_code.value !== "-1") {
+                if (auto_client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_code=" + auto_client_code.value.toString())
+                }
+            }
+            if (auto_client_name.value !== "-1") {
+                if (auto_client_name.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_name=" + auto_client_name.value.toString())
+                }
+            }
+            if (servey_type.value !== "-1") {
+                if (servey_type.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_type=" + servey_type.value.toString())
+                }
+            }
+            if (servey_status.value !== "-1") {
+                if (servey_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_status=" + servey_status.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+    })
+    servey_type.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let fb_types = document.querySelector(".fb_types")
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (auto_client_code.value !== "-1") {
+                if (auto_client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_code=" + auto_client_code.value.toString())
+                }
+            }
+            if (auto_client_name.value !== "-1") {
+                if (auto_client_name.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_name=" + auto_client_name.value.toString())
+                }
+            }
+            if (servey_type.value !== "-1") {
+                if (servey_type.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_type=" + servey_type.value.toString())
+                }
+            }
+            if (servey_status.value !== "-1") {
+                if (servey_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_status=" + servey_status.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+    })
+    servey_status.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let fb_types = document.querySelector(".fb_types")
+            let filter_str = "?"
+            if (fb_types.value !== "-1") {
+                if (fb_types.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&fb_types=" + fb_types.value.toString())
+                }
+            }
+            if (auto_client_code.value !== "-1") {
+                if (auto_client_code.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_code=" + auto_client_code.value.toString())
+                }
+            }
+            if (auto_client_name.value !== "-1") {
+                if (auto_client_name.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&auto_client_name=" + auto_client_name.value.toString())
+                }
+            }
+            if (servey_type.value !== "-1") {
+                if (servey_type.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_type=" + servey_type.value.toString())
+                }
+            }
+            if (servey_status.value !== "-1") {
+                if (servey_status.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&servey_status=" + servey_status.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+    })
+
+    auto_filter_btn.addEventListener("click", ev => {
+            document.getElementById('auto_filter_change').hidden = true
+            document.getElementById('auto_filters').hidden = false
+    });
+    auto_close_filters.addEventListener("click", ev => {
+        if (getUrlVars()["fb_types"]) {
+                let fb_types = document.querySelector(".fb_types")
+                let current_location = window.location.href.split("?")[0]
+                window.location.href = current_location + "?&fb_types=" + fb_types.value.toString()
+                document.getElementById('auto_filter_change').hidden = false
+                document.getElementById('auto_filters').hidden = true
+        } else {
+            let current_location = window.location.href.split("?")[0]
+            window.location.href = current_location
+            document.getElementById('auto_filter_change').hidden = false
+            document.getElementById('auto_filters').hidden = true
+        }
+    })
+
+</script>
+
+<script defer type="text/javascript">
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: "{% url 'get_pagination_for_surveys_and_reviews' %}",
+        processData: false,
+        success: function (response) {
+            get_pagination(response)
+        },
+        error: function (response) {
+            alert("Ошибка")
+        }
+});
+</script>
+{% endblock %}

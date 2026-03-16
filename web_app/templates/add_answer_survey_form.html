@@ -1,0 +1,84 @@
+{% csrf_token %}
+<div class="custom_form add_answer_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Добавить ответ</h1>
+            <button class="form_close_btn form_answer_close_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label"> Вопросы</label>
+                <select name="answer" class="form_select_input margin_right_20" required>
+                    {% for add_guestion in add_guestions %}
+                        <option value="{{add_guestion.id}}">{{add_guestion.value}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="my_button add_answer_to_survey">
+                Добавить
+            </button>
+        </div>
+    </div>
+</div>
+<script defer>
+    document.addEventListener("DOMContentLoaded", e => {
+        let add_answer_survey_form_btn = document.querySelectorAll(".add_answer_survey_form_btn")
+        let add_answer_form = document.querySelector('.add_answer_form')
+        let overlay = document.querySelector('.overlay')
+        let form_answer_close_btn = document.querySelector('.form_answer_close_btn')
+        let add_answer_to_survey = document.querySelector(".add_answer_to_survey")
+
+        async function elementUpdate(selector) {
+              try {
+                var html = await (await fetch(location.href)).text();
+                var newdoc = new DOMParser().parseFromString(html, 'text/html');
+                document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+                console.log('Элемент '+selector+' был успешно обновлен');
+                return true;
+              } catch(err) {
+                console.log('При обновлении элемента '+selector+' произошла ошибка:');
+                console.dir(err);
+                return false;
+              }
+            }
+
+
+        add_answer_to_survey.addEventListener("click", ev => {
+            let data = {
+                "answer": document.getElementsByName("answer")[0].value,
+                "csrfmiddlewaretoken": '{{ csrf_token }}',
+            }
+            $.ajax({
+                url: "{% url 'add_answer_to_new_survey' %}",
+                method: 'post',
+                dataType: 'html',
+                data: data,
+                success: function(data){
+                    add_answer_form.classList.toggle("form_active")
+                elementUpdate('div#answers_div');
+                elementUpdate('div#answers_div_add');
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+        })
+        for (let i = 0; i < add_answer_survey_form_btn.length; i++){
+            add_answer_survey_form_btn[i].addEventListener("click", ev => {
+                add_answer_form.classList.toggle("form_active")
+            })
+        }
+        form_answer_close_btn.addEventListener("click", ev => {
+            add_answer_form.classList.toggle("form_active")
+        })
+
+
+    })
+</script>

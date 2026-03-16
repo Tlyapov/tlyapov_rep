@@ -1,0 +1,57 @@
+{% load static %}
+<nav
+  class="navbar navbar-expand-lg navbar-dark "
+  style="background-color: rgba(239, 239, 239, 1)"
+>
+  <div class="container">
+    <a class="nav-link" href="">
+      <a class="navbar-brand"><img class="logo_img" src="{% static 'web_app/img/logo.jpg' %}" alt="" /></a>
+    </a>
+    <div><button class="nav-button navbar_add">Добавить + </button></div>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-3 mb-lg-0 main_nav">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="{% url 'clients' 1 %}">
+            <div class="icon-home icon"></div>
+            <div class="nav-margin_text">Главная</div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'surveys_and_reviews' 1 %}">
+            <div class="icon-surveys-and-reviews icon"></div>
+            <div class="nav-margin_text">Опросы и отзывы</div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'tasks' 1 %}">
+            <div class="icon-message icon"></div>
+            <div class="nav-margin_text">Задачи</div>
+          </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-0 mb-0 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="">
+            <div class="icon-pass icon"></div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">
+            <div class="icon-logout icon"></div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

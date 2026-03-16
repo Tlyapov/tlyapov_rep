@@ -1,0 +1,122 @@
+{% csrf_token %}
+<div class="custom_form add_client_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Добавить клиента</h1>
+            <button class="form_close_btn form_users_close_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label">Код клиента</label>
+                <input name="client_code" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Код клиента">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Обращение к клиенту</label>
+                <input name="full_name" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Обращение к клиенту">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Наименование компании</label>
+                <input name="company_name" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Наименование компании">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Должность</label>
+                <input name="job_title" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Должность">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Ответственный руководитель</label>
+                <select name="employee" class="form_select_input margin_right_20" required>
+                    {% for employee in employees %}
+                        <option value="{{employee.id}}">{{employee.name}} {{employee.surname}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Телефон</label>
+                <input name="phone" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" max="99999999999"  type="number" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="89008007060">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Telegram ID</label>
+                <input name="tg_id" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="@client">
+            </div>
+            <button class="my_button add_form">
+                Добавить
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", e => {
+        let one_phone = document.getElementsByName("phone")[0]
+            one_phone.addEventListener("input", ev => {
+                let value = one_phone.value
+                if (value.length > 11) one_phone.value = value.slice(0, 11)
+            })
+        let add_client_btn = document.querySelector(".add_client_btn")
+        let navbar_add = document.querySelector(".navbar_add")
+        navbar_add.addEventListener('click', function () {
+            add_client_btn.click();
+        });
+        let close_btn = document.querySelector('.form_users_close_btn')
+        let add_form = document.querySelector(".add_form")
+        let form = document.querySelector('.add_client_form')
+        let overlay = document.querySelector('.overlay')
+        add_form.addEventListener("click", ev => {
+            let data = {
+                    "client_code": document.getElementsByName("client_code")[0].value,
+                    "full_name": document.getElementsByName("full_name")[0].value,
+                    "company_name": document.getElementsByName("company_name")[0].value,
+                    "job_title": document.getElementsByName("job_title")[0].value,
+                    "employee": document.getElementsByName("employee")[0].value,
+                    "phone": document.getElementsByName("phone")[0].value,
+                    "tg_id": document.getElementsByName("tg_id")[0].value,
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'
+                }
+                let confirm = true
+            for(let key in data){
+                if (data[key] === "") {
+                    if (key !== "tg_id") {
+                        confirm = false
+                    }
+                }
+            }
+            if (confirm) {
+                $.ajax({
+                    url: "{% url 'add_client' %}",
+                    method: 'post',
+                    dataType: 'html',
+                    data: data,
+                    success: function(data){
+                        location.reload()
+                    },
+                    error: function (data) {
+                        alert("Ошибка!")
+                        location.reload()
+                    }
+                });
+            } else {
+                alert("Заполните все поля")
+            }
+        })
+        add_client_btn.addEventListener("click", ev => {
+            form.classList.toggle("form_active")
+            overlay.classList.toggle("overlay_active")
+        })
+        close_btn.addEventListener("click", ev => {
+            form.classList.toggle("form_active")
+            overlay.classList.toggle("overlay_active")
+        })
+    })
+</script>

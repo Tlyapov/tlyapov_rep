@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="container">
+<div id="all_clients">
+            <div class="admin-content">
+                <div class="container">
+                    <div class="row fix_row">
+
+                        <div class="admin-content-left">
+                            <div class="input_container" style="position: relative">
+                                <div class="tasks-users-swapper">
+                                    <div class="flex-wrapper">
+                                        <a class="swap-link swap-link-active">Клиенты</a>
+                                        <a href="{% url 'employees' 1 %}" class="swap-link">Сотрудники</a>
+                                        <a href="{% url 'users' 1 %}" class="swap-link">Пользователи</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-content-right">
+                            <div class="input_container">
+                                <div class="input_container-horizontal">
+                                            <button class="my_button add_client_btn">Добавить клиента</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="statistic-cards">
+                <div class="row">
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img person_bg">
+                            </div>
+                            <div class="card_text">
+                                Кол-во клиентов
+                            </div>
+                            <div class="card_value">
+                                {% if clients_count == None %}
+                                    -
+                                {% elif clients_count != None %}
+                                {{clients_count}}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img check_circle">
+                            </div>
+                            <div class="card_text">
+                                Пройденные опросы
+                            </div>
+                            <div class="card_value">
+                                {% if passed_count == None %}
+                                    -
+                                {% elif passed_count != None %}
+                                {{passed_count}}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statistic-card">
+                        <div class="card-info">
+                            <div class="card_img clear_circle">
+                            </div>
+                            <div class="card_text">
+                                Не пройденные опросы
+                            </div>
+                            <div class="card_value">
+                                {% if not_passed_count == None %}
+                                    -
+                                {% elif not_passed_count != None %}
+                                {{not_passed_count}}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+<div class="result-list">
+            <div class="result-list-header">
+                <div class="row fix_row">
+                    <div class="admin-content-left">
+                        <div class="input_container-horizontal">
+                            <h4 class="result-list-heading" style="font-size: 20px">Все клиенты</h4>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="form_close_btn refresh_filter" id="refresh_filter">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                                      fill="black"/>
+                            </svg>
+                        </button>
+                    </div>
+                        <div class="admin-content-right">
+                            <div class="input_container-horizontal" style="margin-right: 20px">
+                                <input name="select_date" type="date" class="form_text_input form_text_input_one_student select_date"
+                                placeholder="">
+                            </div>
+                            <div class="input_container-horizontal">
+                                <div id="filter_change">
+                                    <button class="table-button filter_btn" style="margin-right: 20px ; background:#DEDEDE">Фильтр</button>
+                                    <a href="{% url 'download_clients_excel' %}"><button class="table-button upload_exel">Выгрузить в Excel</button></a>
+                                </div>
+                            </div>
+                            <div class="admin-content-right" style="text-align:right">
+                                <div id="filters">
+                                    <select name="employee_filter" class="form_select_input employee_filter" style="max-width: 60% ; background:#DEDEDE " required>
+                                        <option value="all" >Ответственный руководитель</option>
+                                        {% for employee in employees %}
+                                        <option value="{{employee.id}}" >{{employee}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="status_filter" class="form_select_input status_filter" style="max-width: 28% ; background:#DEDEDE" required>
+                                        <option value="all" >Статус</option>
+                                        <option value="active" >Активен</option>
+                                        <option value="not_active">Неактивен</option>
+                                    </select>
+                                    <button class="form_close_btn close_filters" style="width:35px; height:35px ; background:#DEDEDE">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                                                  fill="black"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="result-list-table ">
+                <div class="result-list-table-header">
+                    <div class="row">
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Код клиента
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Компания
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Обращение к клиенту
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Статус
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Должность
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Ответственный руководитель
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div style="margin-left: 13px" class="result-list-header-text">
+                                Телефон
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Последняя оценка
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Дата
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Кол-во обратной связи
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Автоматизация
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-list-table-content ">
+                    {% for key, client in clients_table.items %}
+                        <div class="row align-items_center result-list-row message_row" id="{{client.id}}">
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if client.client_code == None %}
+                                    -
+                                    {% elif client.client_code != None %}
+                                    {{ client.client_code }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if client.company_name == None %}
+                                    -
+                                    {% elif client.company_name != None %}
+                                    {{ client.company_name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                     {% if client.name == None %}
+                                    -
+                                    {% elif client.name != None %}
+                                    {{ client.name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {% if client.chat_id %}
+                                            Активен
+                                        {% else %}
+                                            Неактивен
+                                        {% endif %}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text" style="word-wrap: break-word; width: 100%">
+                                    {% if client.job_title == None %}
+                                    -
+                                    {% elif client.job_title != None %}
+                                    {{ client.job_title }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if client.employee == None %}
+                                    -
+                                    {% elif client.employee != None %}
+                                    {{ client.employee }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if client.phone == None %}
+                                    -
+                                    {% elif client.phone != None %}
+                                    {{ client.phone}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container" >
+                                <div class="result-list-text">
+                                    {% if client.rating == '🟢 Все нравится!' %}
+                                    🟢
+                                    {% elif client.rating == '🟡 Есть вопросы.' %}
+                                    🟡
+                                    {% elif client.rating == '🔴 Очень плохо (' %}
+                                    🔴
+                                    {% else %}
+                                    {{client.rating}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if client.date == 'None' %}
+                                    -
+                                    {% elif client.date != 'None' %}
+                                    {{client.date}}
+                                    {% endif %}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {% if client.tasks == 'None' %}
+                                    -
+                                    {% elif client.tasks != 'None' %}
+                                    {{client.tasks}}
+                                    {% endif %}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                    <div class="result-list-text">
+                                            {{ client.automation }}
+                                     </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                <div class="pagination_container">
+                    <a class="pagination_button" tabindex="-1" role="button"></a>
+                    <a class="pagination_button_right" tabindex="-1"
+                       role="button"></a>
+                </div>
+            </div>
+</div>
+</div>
+        </section>
+
+{% include 'get_one_client_page.html' %}
+{% include 'add_client.html' %}
+{% include 'paginataion.html' %}
+
+
+
+<script defer>
+    let close_filters = document.querySelector('.close_filters')
+    let filter_btn = document.querySelector('.filter_btn')
+    document.getElementById('filters').hidden = true
+    document.getElementById('filter_change').hidden = false
+
+    async function elementUpdate(selector) {
+          try {
+            var html = await (await fetch(location.href)).text();
+            var newdoc = new DOMParser().parseFromString(html, 'text/html');
+            document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+            console.log('Элемент '+selector+' был успешно обновлен');
+            return true;
+          } catch(err) {
+            console.log('При обновлении элемента '+selector+' произошла ошибка:');
+            console.dir(err);
+            return false;
+          }
+        }
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    if (window.location.href.split("?").length > 1){
+        let employee_filter = document.querySelector(".employee_filter")
+        let status_filter = document.querySelector(".status_filter")
+
+        if(getUrlVars()["employee_filter"] || getUrlVars()["status_filter"]) {
+            document.getElementById('filters').hidden = false
+            document.getElementById('filter_change').hidden = true
+
+            if (getUrlVars()["employee_filter"]) {
+                employee_filter.value = getUrlVars()["employee_filter"]
+            } else {
+                employee_filter.value = "all"
+            }
+            if (getUrlVars()["status_filter"]) {
+                status_filter.value = getUrlVars()["status_filter"]
+            } else {
+                status_filter.value = "all"
+            }
+        }
+    }
+
+    let status_filter = document.querySelector(".status_filter")
+    let employee_filter = document.querySelector(".employee_filter")
+    status_filter.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (status_filter.value !== "-1") {
+                if (status_filter.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&status_filter=" + status_filter.value.toString())
+                }
+            }
+            if (employee_filter.value !== "-1") {
+                if (employee_filter.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee_filter=" + employee_filter.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+     employee_filter.addEventListener("change", evt => {
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (employee_filter.value !== "-1") {
+                if (employee_filter.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&employee_filter=" + employee_filter.value.toString())
+                }
+            }
+            if (status_filter.value !== "-1") {
+                if (status_filter.value == "all") {
+                    filter_str += ''
+                } else {
+                    filter_str += ("&status_filter=" + status_filter.value.toString())
+                }
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+
+
+    filter_btn.addEventListener("click", ev => {
+            document.getElementById('filter_change').hidden = true
+            document.getElementById('filters').hidden = false
+    });
+    close_filters.addEventListener("click", ev => {
+                let current_location = window.location.href.split("?")[0]
+                window.location.href = current_location
+                document.getElementById('filter_change').hidden = false
+                document.getElementById('filters').hidden = true
+    })
+
+</script>
+<script defer>
+    let refresh_filter = document.querySelector('.refresh_filter')
+    document.getElementById('refresh_filter').hidden = true
+    let select_date = document.querySelector(".select_date")
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    if (window.location.href.split("?").length > 1){
+        let select_date = document.querySelector(".select_date")
+
+        if(getUrlVars()["select_date"]) {
+            document.getElementById('refresh_filter').hidden = false
+
+            if (getUrlVars()["select_date"]) {
+                select_date.value = getUrlVars()["select_date"]
+            }
+        }
+    }
+    refresh_filter.addEventListener("click", ev => {
+            document.getElementById('refresh_filter').hidden = true
+            let current_location = window.location.href.split("?")[0]
+            window.location.href = current_location
+            })
+
+     select_date.addEventListener("change", evt => {
+            document.getElementById('refresh_filter').hidden = false
+            let current_location = window.location.href.split("?")[0]
+            let filter_str = "?"
+            if (select_date.value !== "-1") {
+                filter_str += ("&select_date=" + select_date.value.toString())
+            }
+            if (filter_str !== "?")
+                window.location.href = current_location += filter_str
+            else
+                window.location.href = current_location
+        })
+</script>
+
+<script defer type="text/javascript">
+
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: "{% url 'get_pagination_for_client' %}",
+        processData: false,
+        success: function (response) {
+            get_pagination(response)
+        },
+        error: function (response) {
+            alert("Ошибка")
+        }
+});
+</script>
+
+{% endblock %}
+

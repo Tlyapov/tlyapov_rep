@@ -1,0 +1,179 @@
+<script defer>
+    function get_pagination(response) {
+        let page_count = JSON.parse(response.pagination_count)
+        let back_btn = document.querySelector(".pagination_button")
+        let next_btn = document.querySelector(".pagination_button_right")
+
+        let url_list = window.location.href.split("/")
+        let current_page = parseInt(url_list[url_list.length-1])
+        let url = ""
+        let page_link
+        for (let i = 0; i < url_list.length-1; i++) {
+            url.concat(url_list[i])
+            url.concat("/")
+        }
+
+        if (page_count < 9) {
+            for (let i = 1; i <= page_count; i++) {
+                page_link = document.createElement('a')
+                page_link.classList.add('pagination_link')
+                page_link.href = url.toString() + i.toString()
+                page_link.textContent = i.toString()
+
+                if(i === current_page) {
+                    page_link.classList.add('pagination_link-active')
+                }
+                next_btn.before(page_link)
+            }
+        } else {
+            if (current_page === 1 || current_page === 2) {
+                for (let i = 1; i <= 3; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + i.toString()
+                    page_link.textContent = i.toString()
+                    next_btn.before(page_link)
+                    if(i === current_page) {
+                        page_link.classList.add('pagination_link-active')
+                    }
+                }
+                page_link = document.createElement('a')
+                page_link.classList.add('dots_pagination')
+                page_link.href = ""
+                page_link.innerHTML = `<svg width="40" height="30" viewBox="0 0 40 30" fill="none"  xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.4242 19.1108C14.1429 19.1108 13.9015 19.0114 13.6998 18.8125C13.5009 18.6108 13.4015 18.3693 13.4015 18.0881C13.4015 17.8097 13.5009 17.571 13.6998 17.3722C13.9015 17.1733 14.1429 17.0739 14.4242 17.0739C14.6969 17.0739 14.9355 17.1733 15.1401 17.3722C15.3446 17.571 15.4469 17.8097 15.4469 18.0881C15.4469 18.2756 15.3986 18.4474 15.302 18.6037C15.2083 18.7571 15.0847 18.8807 14.9313 18.9744C14.7779 19.0653 14.6088 19.1108 14.4242 19.1108ZM19.9984 19.1108C19.7172 19.1108 19.4757 19.0114 19.274 18.8125C19.0751 18.6108 18.9757 18.3693 18.9757 18.0881C18.9757 17.8097 19.0751 17.571 19.274 17.3722C19.4757 17.1733 19.7172 17.0739 19.9984 17.0739C20.2711 17.0739 20.5098 17.1733 20.7143 17.3722C20.9189 17.571 21.0211 17.8097 21.0211 18.0881C21.0211 18.2756 20.9728 18.4474 20.8762 18.6037C20.7825 18.7571 20.6589 18.8807 20.5055 18.9744C20.3521 19.0653 20.1831 19.1108 19.9984 19.1108ZM25.5726 19.1108C25.2914 19.1108 25.0499 19.0114 24.8482 18.8125C24.6493 18.6108 24.5499 18.3693 24.5499 18.0881C24.5499 17.8097 24.6493 17.571 24.8482 17.3722C25.0499 17.1733 25.2914 17.0739 25.5726 17.0739C25.8453 17.0739 26.084 17.1733 26.2885 17.3722C26.4931 17.571 26.5953 17.8097 26.5953 18.0881C26.5953 18.2756 26.5471 18.4474 26.4505 18.6037C26.3567 18.7571 26.2331 18.8807 26.0797 18.9744C25.9263 19.0653 25.7573 19.1108 25.5726 19.1108Z" fill="black"/>
+                                    </svg>`
+                next_btn.before(page_link)
+                for (let i = page_count; i <= page_count+1; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + (i-1).toString()
+                    page_link.textContent = (i-1).toString()
+                    next_btn.before(page_link)
+                }
+            } else if (current_page === 3) {
+                for (let i = 1; i <= 4; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + i.toString()
+                    page_link.textContent = i.toString()
+                    next_btn.before(page_link)
+                    if(i === current_page) {
+                        page_link.classList.add('pagination_link-active')
+                    }
+                }
+                page_link = document.createElement('a')
+                page_link.classList.add('dots_pagination')
+                page_link.href = ""
+                page_link.innerHTML = `<svg width="40" height="30" viewBox="0 0 40 30" fill="none"  xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.4242 19.1108C14.1429 19.1108 13.9015 19.0114 13.6998 18.8125C13.5009 18.6108 13.4015 18.3693 13.4015 18.0881C13.4015 17.8097 13.5009 17.571 13.6998 17.3722C13.9015 17.1733 14.1429 17.0739 14.4242 17.0739C14.6969 17.0739 14.9355 17.1733 15.1401 17.3722C15.3446 17.571 15.4469 17.8097 15.4469 18.0881C15.4469 18.2756 15.3986 18.4474 15.302 18.6037C15.2083 18.7571 15.0847 18.8807 14.9313 18.9744C14.7779 19.0653 14.6088 19.1108 14.4242 19.1108ZM19.9984 19.1108C19.7172 19.1108 19.4757 19.0114 19.274 18.8125C19.0751 18.6108 18.9757 18.3693 18.9757 18.0881C18.9757 17.8097 19.0751 17.571 19.274 17.3722C19.4757 17.1733 19.7172 17.0739 19.9984 17.0739C20.2711 17.0739 20.5098 17.1733 20.7143 17.3722C20.9189 17.571 21.0211 17.8097 21.0211 18.0881C21.0211 18.2756 20.9728 18.4474 20.8762 18.6037C20.7825 18.7571 20.6589 18.8807 20.5055 18.9744C20.3521 19.0653 20.1831 19.1108 19.9984 19.1108ZM25.5726 19.1108C25.2914 19.1108 25.0499 19.0114 24.8482 18.8125C24.6493 18.6108 24.5499 18.3693 24.5499 18.0881C24.5499 17.8097 24.6493 17.571 24.8482 17.3722C25.0499 17.1733 25.2914 17.0739 25.5726 17.0739C25.8453 17.0739 26.084 17.1733 26.2885 17.3722C26.4931 17.571 26.5953 17.8097 26.5953 18.0881C26.5953 18.2756 26.5471 18.4474 26.4505 18.6037C26.3567 18.7571 26.2331 18.8807 26.0797 18.9744C25.9263 19.0653 25.7573 19.1108 25.5726 19.1108Z" fill="black"/>
+                                    </svg>`
+                next_btn.before(page_link)
+                for (let i = page_count; i <= page_count+1; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + (i-1).toString()
+                    page_link.textContent = (i-1).toString()
+                    next_btn.before(page_link)
+                }
+            } else if (current_page === page_count || current_page === page_count-1) {
+                for (let i = 1; i <= 1; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + i.toString()
+                    page_link.textContent = i.toString()
+                    next_btn.before(page_link)
+                }
+                page_link = document.createElement('a')
+                page_link.classList.add('dots_pagination')
+                page_link.href = ""
+                page_link.innerHTML = `<svg width="40" height="30" viewBox="0 0 40 30" fill="none"  xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.4242 19.1108C14.1429 19.1108 13.9015 19.0114 13.6998 18.8125C13.5009 18.6108 13.4015 18.3693 13.4015 18.0881C13.4015 17.8097 13.5009 17.571 13.6998 17.3722C13.9015 17.1733 14.1429 17.0739 14.4242 17.0739C14.6969 17.0739 14.9355 17.1733 15.1401 17.3722C15.3446 17.571 15.4469 17.8097 15.4469 18.0881C15.4469 18.2756 15.3986 18.4474 15.302 18.6037C15.2083 18.7571 15.0847 18.8807 14.9313 18.9744C14.7779 19.0653 14.6088 19.1108 14.4242 19.1108ZM19.9984 19.1108C19.7172 19.1108 19.4757 19.0114 19.274 18.8125C19.0751 18.6108 18.9757 18.3693 18.9757 18.0881C18.9757 17.8097 19.0751 17.571 19.274 17.3722C19.4757 17.1733 19.7172 17.0739 19.9984 17.0739C20.2711 17.0739 20.5098 17.1733 20.7143 17.3722C20.9189 17.571 21.0211 17.8097 21.0211 18.0881C21.0211 18.2756 20.9728 18.4474 20.8762 18.6037C20.7825 18.7571 20.6589 18.8807 20.5055 18.9744C20.3521 19.0653 20.1831 19.1108 19.9984 19.1108ZM25.5726 19.1108C25.2914 19.1108 25.0499 19.0114 24.8482 18.8125C24.6493 18.6108 24.5499 18.3693 24.5499 18.0881C24.5499 17.8097 24.6493 17.571 24.8482 17.3722C25.0499 17.1733 25.2914 17.0739 25.5726 17.0739C25.8453 17.0739 26.084 17.1733 26.2885 17.3722C26.4931 17.571 26.5953 17.8097 26.5953 18.0881C26.5953 18.2756 26.5471 18.4474 26.4505 18.6037C26.3567 18.7571 26.2331 18.8807 26.0797 18.9744C25.9263 19.0653 25.7573 19.1108 25.5726 19.1108Z" fill="black"/>
+                                    </svg>`
+                next_btn.before(page_link)
+                for (let i = page_count; i <= page_count+2; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + (i-2).toString()
+                    page_link.textContent = (i-2).toString()
+                    next_btn.before(page_link)
+                    if(i-2 === current_page) {
+                        page_link.classList.add('pagination_link-active')
+                    }
+                }
+            } else if (current_page === page_count - 2) {
+                for (let i = 1; i <= 1; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + i.toString()
+                    page_link.textContent = i.toString()
+                    next_btn.before(page_link)
+                }
+                page_link = document.createElement('a')
+                page_link.classList.add('dots_pagination')
+                page_link.href = ""
+                page_link.innerHTML = `<svg width="40" height="30" viewBox="0 0 40 30" fill="none"  xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.4242 19.1108C14.1429 19.1108 13.9015 19.0114 13.6998 18.8125C13.5009 18.6108 13.4015 18.3693 13.4015 18.0881C13.4015 17.8097 13.5009 17.571 13.6998 17.3722C13.9015 17.1733 14.1429 17.0739 14.4242 17.0739C14.6969 17.0739 14.9355 17.1733 15.1401 17.3722C15.3446 17.571 15.4469 17.8097 15.4469 18.0881C15.4469 18.2756 15.3986 18.4474 15.302 18.6037C15.2083 18.7571 15.0847 18.8807 14.9313 18.9744C14.7779 19.0653 14.6088 19.1108 14.4242 19.1108ZM19.9984 19.1108C19.7172 19.1108 19.4757 19.0114 19.274 18.8125C19.0751 18.6108 18.9757 18.3693 18.9757 18.0881C18.9757 17.8097 19.0751 17.571 19.274 17.3722C19.4757 17.1733 19.7172 17.0739 19.9984 17.0739C20.2711 17.0739 20.5098 17.1733 20.7143 17.3722C20.9189 17.571 21.0211 17.8097 21.0211 18.0881C21.0211 18.2756 20.9728 18.4474 20.8762 18.6037C20.7825 18.7571 20.6589 18.8807 20.5055 18.9744C20.3521 19.0653 20.1831 19.1108 19.9984 19.1108ZM25.5726 19.1108C25.2914 19.1108 25.0499 19.0114 24.8482 18.8125C24.6493 18.6108 24.5499 18.3693 24.5499 18.0881C24.5499 17.8097 24.6493 17.571 24.8482 17.3722C25.0499 17.1733 25.2914 17.0739 25.5726 17.0739C25.8453 17.0739 26.084 17.1733 26.2885 17.3722C26.4931 17.571 26.5953 17.8097 26.5953 18.0881C26.5953 18.2756 26.5471 18.4474 26.4505 18.6037C26.3567 18.7571 26.2331 18.8807 26.0797 18.9744C25.9263 19.0653 25.7573 19.1108 25.5726 19.1108Z" fill="black"/>
+                                    </svg>`
+                next_btn.before(page_link)
+                for (let i = page_count; i <= page_count+3; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + (i-3).toString()
+                    page_link.textContent = (i-3).toString()
+                    next_btn.before(page_link)
+                    if(i-3 === current_page) {
+                        page_link.classList.add('pagination_link-active')
+                    }
+                }
+            } else {
+                page_link = document.createElement('a')
+                page_link.classList.add('pagination_link')
+                page_link.href = url.toString() + "1"
+                page_link.textContent = "1"
+                next_btn.before(page_link)
+
+                page_link = document.createElement('a')
+                page_link.classList.add('dots_pagination')
+                page_link.href = ""
+                page_link.innerHTML = `<svg width="40" height="30" viewBox="0 0 40 30" fill="none"  xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.4242 19.1108C14.1429 19.1108 13.9015 19.0114 13.6998 18.8125C13.5009 18.6108 13.4015 18.3693 13.4015 18.0881C13.4015 17.8097 13.5009 17.571 13.6998 17.3722C13.9015 17.1733 14.1429 17.0739 14.4242 17.0739C14.6969 17.0739 14.9355 17.1733 15.1401 17.3722C15.3446 17.571 15.4469 17.8097 15.4469 18.0881C15.4469 18.2756 15.3986 18.4474 15.302 18.6037C15.2083 18.7571 15.0847 18.8807 14.9313 18.9744C14.7779 19.0653 14.6088 19.1108 14.4242 19.1108ZM19.9984 19.1108C19.7172 19.1108 19.4757 19.0114 19.274 18.8125C19.0751 18.6108 18.9757 18.3693 18.9757 18.0881C18.9757 17.8097 19.0751 17.571 19.274 17.3722C19.4757 17.1733 19.7172 17.0739 19.9984 17.0739C20.2711 17.0739 20.5098 17.1733 20.7143 17.3722C20.9189 17.571 21.0211 17.8097 21.0211 18.0881C21.0211 18.2756 20.9728 18.4474 20.8762 18.6037C20.7825 18.7571 20.6589 18.8807 20.5055 18.9744C20.3521 19.0653 20.1831 19.1108 19.9984 19.1108ZM25.5726 19.1108C25.2914 19.1108 25.0499 19.0114 24.8482 18.8125C24.6493 18.6108 24.5499 18.3693 24.5499 18.0881C24.5499 17.8097 24.6493 17.571 24.8482 17.3722C25.0499 17.1733 25.2914 17.0739 25.5726 17.0739C25.8453 17.0739 26.084 17.1733 26.2885 17.3722C26.4931 17.571 26.5953 17.8097 26.5953 18.0881C26.5953 18.2756 26.5471 18.4474 26.4505 18.6037C26.3567 18.7571 26.2331 18.8807 26.0797 18.9744C25.9263 19.0653 25.7573 19.1108 25.5726 19.1108Z" fill="black"/>
+                                    </svg>`
+                next_btn.before(page_link)
+
+                for (let i = current_page-1; i <= current_page+1; i++) {
+                    page_link = document.createElement('a')
+                    page_link.classList.add('pagination_link')
+                    page_link.href = url.toString() + i.toString()
+                    page_link.textContent = i.toString()
+                    next_btn.before(page_link)
+                    if(i === current_page) {
+                        page_link.classList.add('pagination_link-active')
+                    }
+                }
+
+                page_link = document.createElement('a')
+                page_link.classList.add('dots_pagination')
+                page_link.href = ""
+                page_link.innerHTML = `<svg width="40" height="30" viewBox="0 0 40 30" fill="none"  xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.4242 19.1108C14.1429 19.1108 13.9015 19.0114 13.6998 18.8125C13.5009 18.6108 13.4015 18.3693 13.4015 18.0881C13.4015 17.8097 13.5009 17.571 13.6998 17.3722C13.9015 17.1733 14.1429 17.0739 14.4242 17.0739C14.6969 17.0739 14.9355 17.1733 15.1401 17.3722C15.3446 17.571 15.4469 17.8097 15.4469 18.0881C15.4469 18.2756 15.3986 18.4474 15.302 18.6037C15.2083 18.7571 15.0847 18.8807 14.9313 18.9744C14.7779 19.0653 14.6088 19.1108 14.4242 19.1108ZM19.9984 19.1108C19.7172 19.1108 19.4757 19.0114 19.274 18.8125C19.0751 18.6108 18.9757 18.3693 18.9757 18.0881C18.9757 17.8097 19.0751 17.571 19.274 17.3722C19.4757 17.1733 19.7172 17.0739 19.9984 17.0739C20.2711 17.0739 20.5098 17.1733 20.7143 17.3722C20.9189 17.571 21.0211 17.8097 21.0211 18.0881C21.0211 18.2756 20.9728 18.4474 20.8762 18.6037C20.7825 18.7571 20.6589 18.8807 20.5055 18.9744C20.3521 19.0653 20.1831 19.1108 19.9984 19.1108ZM25.5726 19.1108C25.2914 19.1108 25.0499 19.0114 24.8482 18.8125C24.6493 18.6108 24.5499 18.3693 24.5499 18.0881C24.5499 17.8097 24.6493 17.571 24.8482 17.3722C25.0499 17.1733 25.2914 17.0739 25.5726 17.0739C25.8453 17.0739 26.084 17.1733 26.2885 17.3722C26.4931 17.571 26.5953 17.8097 26.5953 18.0881C26.5953 18.2756 26.5471 18.4474 26.4505 18.6037C26.3567 18.7571 26.2331 18.8807 26.0797 18.9744C25.9263 19.0653 25.7573 19.1108 25.5726 19.1108Z" fill="black"/>
+                                    </svg>`
+                next_btn.before(page_link)
+
+                page_link = document.createElement('a')
+                page_link.classList.add('pagination_link')
+                page_link.href = url.toString() + page_count.toString()
+                page_link.textContent = page_count.toString()
+                next_btn.before(page_link)
+            }
+        }
+
+        if (parseInt(current_page) > 1) {
+            back_btn.href = url.toString() + (parseInt(current_page) - 1).toString()
+        }
+
+        if (parseInt(current_page) < page_count) {
+            next_btn.href = url.toString() + (parseInt(current_page) + 1).toString()
+        }
+    }
+</script>

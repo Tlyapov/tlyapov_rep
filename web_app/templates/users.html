@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="container">
+        <div id="all_employees">
+        <div class="admin-content">
+                <div class="container">
+                    <div class="row fix_row">
+
+                        <div class="admin-content-left">
+                            <div class="input_container" style="position: relative">
+                                <div class="tasks-users-swapper">
+                                    <div class="flex-wrapper">
+                                        <a href="{% url 'clients' 1 %}"class="swap-link">Клиенты</a>
+                                        <a href="{% url 'employees' 1 %}" class="swap-link">Сотрудники</a>
+                                        <a href="" class="swap-link swap-link-active">Пользователи</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-content-right">
+                            <div class="input_container">
+                                <div class="input_container-horizontal">
+                                        <select name="fb_types" class="form_select_input margin_right_20 fb_types" required>
+                                            <option value="" >За весь период</option>
+                                        </select>
+                                </div>
+                            </div>
+                            <div class="input_container">
+                                <div class="input_container-horizontal">
+                                            <button class="my_button add_employee_btn">Добавить сотрудника</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        <div>
+
+
+
+
+
+
+<div class="result-list">
+            <div class="result-list-header">
+                <div class="row fix_row">
+                    <div class="admin-content-left">
+                        <div class="input_container-horizontal">
+                            <h4 class="result-list-heading" style="font-size: 20px">Все пользователи</h4>
+                        </div>
+                    </div>
+
+                    <div class="admin-content-right">
+                        <div class="input_container-horizontal">
+                            <a href="{% url 'download_users_excel'%}"><button class="table-button upload_exel">Выгрузить в Excel</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-list-table ">
+                <div class="result-list-table-header">
+                    <div class="row">
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Фамилия
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Имя
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Должность
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Телефон
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Кол-во клиентов
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Превосходно
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Нормально
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Плохо
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Кол-во обратной связи
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Роль
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-list-table-content ">
+                    {% for employee, empl_clients_count, empl_perf_rate, empl_good_rate, empl_bad_rate, feedback_count in employee_table_list %}
+                        {% if employee.is_superuser %}
+                        {% else %}
+                        {% if employee.role == 'user'  or employee.role == 'admin' %}
+                        <div class="row align-items_center result-list-row message_row" id="{{employee.id}}">
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ employee.surname}}
+                                     </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{employee.name}}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ employee.job_title }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ employee.phone }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{empl_clients_count}}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{empl_perf_rate}}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{empl_good_rate}}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {{empl_bad_rate}}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{feedback_count}}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                    {% if employee.role == 'admin' %}
+                                    Админ
+                                    {% elif employee.role == 'user' %}
+                                    Пользователь
+                                    {% elif employee.role == 'employee' %}
+                                    Сотрудник
+                                    {% elif employee.role == 'None' %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+
+                <div class="pagination_container">
+                    <a class="pagination_button" tabindex="-1" role="button"></a>
+                    <a class="pagination_button_right" tabindex="-1"
+                       role="button"></a>
+                </div>
+
+</div>
+
+</div>
+</div>
+        </section>
+{% include 'get_one_employee_page.html' %}
+{% include 'add_employee.html' %}
+{% include 'paginataion.html' %}
+<script defer type="text/javascript">
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: "{% url 'get_pagination_for_user' %}",
+        processData: false,
+        success: function (response) {
+            get_pagination(response)
+        },
+        error: function (response) {
+            alert("Ошибка")
+        }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="container">
+        <div>
+            <div class="row fix_row">
+                    <div class="tasks-users-swapper">
+                        <div class="flex-wrapper">
+                            <a class="swap-link swap-link-active">Клиенты</a>
+                            <a href="" class="swap-link">Сотрудники</a>
+                            <a href="" class="swap-link">Пользователи</a>
+                        </div>
+                    </div>
+                <div class="admin-content-right">
+                                <div style="margin-right: 25px"><form class="form_select">
+
+                                    <label>За весь период</label>
+                                    <select></select>
+                                </form></div>
+                                <div class="input_container-horizontal">
+                                        <button class="my_button add_user_btn">Добавить клиента</button>
+                                </div>
+                </div>
+            </div>
+        </div>
+        <div class="statistic-cards">
+            <div class="row">
+                <div class="statistic-card">
+                    <div class="card-info">
+                        <div class="card_img person_bg">
+                        </div>
+                        <div class="card_text">
+                            Кол-во клиентов
+                        </div>
+                        <div class="card_value">
+                            {{1}}
+                        </div>
+                    </div>
+                </div>
+                <div class="statistic-card">
+                    <div class="card-info">
+                        <div class="card_img check_circle">
+                        </div>
+                        <div class="card_text">
+                            Пройденные опросы
+                        </div>
+                        <div class="card_value">
+                            {{1}}
+                        </div>
+                    </div>
+                </div>
+                <div class="statistic-card">
+                    <div class="card-info">
+                        <div class="card_img clear_circle">
+                        </div>
+                        <div class="card_text">
+                            Не пройденные опросы
+                        </div>
+                        <div class="card_value">
+                            {{1}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+<div class="result-list">
+            <div class="result-list-header">
+                <div class="row fix_row">
+                    <div class="admin-content-left">
+                        <div class="input_container-horizontal">
+                            <h4 class="result-list-heading" style="font-size: 20px">Все клиенты</h4>
+                        </div>
+                    </div>
+
+                    <div class="admin-content-right">
+                        <div class="input_container-horizontal" style="margin-right: 20px">
+                            <form class="form_select">
+
+                                    <label>За весь период</label>
+                                    <select></select>
+                            </form>
+                        </div>
+                        <div class="input_container-horizontal">
+                            <button class="table-button upload_exel">Выгрузить в Exel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-list-table ">
+                <div class="result-list-table-header">
+                    <div class="row">
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                ФИО
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Статус
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Компания
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Код клиента
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Должность
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Ответсвенный руководитель
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Телефон
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Последняя оценка
+                            </div>
+                        </div>
+                        <div class="col-1 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Дата
+                            </div>
+                        </div>
+                        <div class="col-2 result-list-sort-container">
+                            <div class="result-list-header-text">
+                                Кол-во обратной связи
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-list-table-content ">
+                    {% for client in clients %}
+                        <div class="row align-items_center result-list-row message_row" id="{{client.id}}">
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.name }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.name }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.company_name }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.client_code }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.job_title }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.employee }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.phone }}
+                                     </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.name }}
+                                     </div>
+                            </div>
+                            <div class="col-1 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.name }}
+                                     </div>
+                            </div>
+                            <div class="col-2 result-list-sort-container">
+                                <div class="result-list-text">
+                                        {{ client.name }}
+                                     </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+</div>
+
+        </section>
+{% endblock %}

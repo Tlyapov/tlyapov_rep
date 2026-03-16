@@ -1,0 +1,188 @@
+{% csrf_token %}
+<div class="custom_form change_employee_form">
+    <div class="modal-window">
+        <div class="form_heading_container">
+            <h1 class="form-heading">Редактировать сотрудника</h1>
+            <button class="form_close_btn form_change_employees_close_btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.3 5.70996C18.1131 5.5227 17.8595 5.41747 17.595 5.41747C17.3305 5.41747 17.0768 5.5227 16.89 5.70996L12 10.59L7.10997 5.69996C6.92314 5.5127 6.66949 5.40747 6.40497 5.40747C6.14045 5.40747 5.8868 5.5127 5.69997 5.69996C5.30997 6.08996 5.30997 6.71996 5.69997 7.10996L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10996C18.68 6.72996 18.68 6.08996 18.3 5.70996Z"
+                          fill="black"/>
+                </svg>
+            </button>
+        </div>
+        <div class="form_input_container">
+            <div class="form_input_container_child">
+                <label class="input_label">Имя</label>
+                <input name="name_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Имя">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Фамилия</label>
+                <input name="surname_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="ФИО">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Логин</label>
+                <input name="login_change" type="text" class="form_text_input form_text_input_one_student"
+                       placeholder="Наименование компании">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Пароль</label>
+                <input name="password_change" type="password" class="form_text_input form_text_input_one_student"
+                       placeholder="Пароль">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Подтвердить пароль</label>
+                <input name="confirm_password_change" type="password" class="form_text_input form_text_input_one_student"
+                       placeholder="Подтвердить пароль">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Telegram ID</label>
+                <input name="tg_id_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="@client">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Телефон</label>
+                <input name="phone_change" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" max="99999999999"  type="number" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="89008007060">
+            </div>
+            <div class="form_input_container_child">
+                <label class="input_label">Роль</label>
+                <select name="employee_role_change" class="form_select_input margin_right_20" required>
+                    <option value="employee">Сотрудник</option>
+                    <option value="user">Пользователь</option>
+                    <option value="admin">Админ</option>
+                </select>
+            </div>
+           <div class="form_input_container_child">
+                <label class="input_label">Должность</label>
+                <input name="job_title_change" type="text" class="form_text_input form_text_input_one_student margin_right_20"
+                       placeholder="Должность">
+            </div>
+            <button class="my_button save_change_form">
+                Сохранить
+            </button>
+            {% if user.is_superuser %}
+            <button class="table-button delete_change_form">
+                Удалить
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<script defer>
+    let name_change = document.getElementsByName("name_change")[0]
+    let surname_change = document.getElementsByName("surname_change")[0]
+    let login_change = document.getElementsByName("login_change")[0]
+    let password_change = document.getElementsByName("password_change")[0]
+    let confirm_password_change = document.getElementsByName("confirm_password_change")[0]
+    let tg_id_change = document.getElementsByName("tg_id_change")[0]
+    let phone_change = document.getElementsByName("phone_change")[0]
+    let employee_role_change = document.getElementsByName("employee_role_change")[0]
+    let job_title_change = document.getElementsByName("job_title_change")[0]
+
+    let change_employee_form = document.querySelector('.change_employee_form')
+    let employee_list_row = document.querySelectorAll(".result-list-row")
+
+    let overlay = document.querySelector('.overlay')
+    let form_change_employees_close_btn = document.querySelector('.form_change_employees_close_btn')
+
+    form_change_employees_close_btn.addEventListener("click", ev => {
+        change_employee_form.classList.toggle("form_active")
+        overlay.classList.toggle("overlay_active")
+    })
+
+    for (let i = 0; i < employee_list_row.length; i++) {
+        employee_list_row[i].addEventListener("click", evt => {
+            change_employee_form.classList.toggle("form_active")
+            change_employee_form.id = employee_list_row[i].id
+
+            overlay.classList.toggle("overlay_active")
+            let employee_id = parseInt(employee_list_row[i].id)
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: "{% url 'get_one_employee' %}" + `?pk=${employee_id}`,
+                processData: false,
+                success: function (response) {
+                    name_change.value = response['name']
+                    surname_change.value = response['surname']
+                    login_change.value = response['login']
+                    password_change.value = response['password']
+                    confirm_password_change.value = response['password']
+                    tg_id_change.value = response['tg_id']
+                    phone_change.value = response['phone']
+                    employee_role_change.value = response['role']
+                    job_title_change.value = response['job_title']
+                },
+                error: function (response) {
+                    alert("Ошибка!")
+                    location.reload()
+                }
+            });
+        })
+    }
+
+
+let save_change_form = document.querySelector(".save_change_form")
+    save_change_form.addEventListener('click', evt => {
+        let employee_id = parseInt(change_employee_form.id)
+        let data = {
+            "pk": employee_id,
+            "name": name_change.value,
+            "surname": surname_change.value,
+            "login": login_change.value,
+            "password": password_change.value,
+            "confirm_password": confirm_password_change.value,
+            "tg_id": tg_id_change.value,
+            "phone": phone_change.value,
+            "role": employee_role_change.value,
+            "job_title": job_title_change.value,
+            "csrfmiddlewaretoken": '{{ csrf_token }}'
+        }
+        $.ajax({
+            url: "{% url 'update_employee_view' %}",
+            method: 'post',
+            dataType: 'html',
+            data: data,
+            success: function(data){
+                location.reload()
+            },
+            error: function (data) {
+                alert("Ошибка!")
+                location.reload()
+            }
+        });
+    })
+
+
+    delete_change_form = document.querySelector(".delete_change_form")
+    delete_change_form.addEventListener('click', evt => {
+            let employee_id = parseInt(change_employee_form.id)
+            let my_data = {
+                "employee_id": employee_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            }
+
+            $.ajax({
+                url: "{% url 'delete_employee_btn' %}",
+                method: 'post',
+                dataType: 'html',
+                data: my_data,
+                success: function (data) {
+                },
+                error: function (data) {
+                    alert("Ошибка!")
+                }
+            });
+
+    })
+
+
+
+</script>
